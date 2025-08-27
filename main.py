@@ -11,6 +11,9 @@ font = pygame.font.SysFont("arial", 38)
 small_font = pygame.font.SysFont("arial", 22)
 
 background = (181, 101, 29)
+white = (255, 255, 255)
+rect_border_color = (0, 0, 0)
+font_color = (0, 0, 0)
 
 WORDS = {
     "SHAME": {"same", "seam", "sham", "ham", "ash", "she", "me"},
@@ -24,7 +27,7 @@ WORDS = {
     "HEART": {"earth", "heat", "rat", "ear", "hat"},
     "LIGHT": {"hit", "lit", "git", "tig", "til"}
 }
-
+guests = []
 
 def shuffle_letter(word):
     letter = list(word)
@@ -34,7 +37,7 @@ def shuffle_letter(word):
 
 def position(word):
     letters = []
-    start_x, y = 180, 350
+    start_x, y = 180, 400  
     gap = 60
 
     for i, char in enumerate(word):
@@ -42,14 +45,6 @@ def position(word):
         rect = pygame.Rect(x, y, 55, 50)
         letters.append([char, rect, True])
     return letters
-
-
-def draw_game(letters):
-    for char, rect, active in letters:
-        pygame.draw.rect(screen, (250, 220, 180), rect)
-        pygame.draw.rect(screen, (0, 0, 0), rect, 2)
-        txt = font.render(char, True, (0, 0, 0))
-        screen.blit(txt, (rect.x+13, rect.y+5))
 
 
 def ans(ans):
@@ -66,6 +61,42 @@ def ans(ans):
             pygame.draw.rect(screen, (0, 0, 0), rect, 2)
 
 
+def lines(letters):
+    start_x, y = 180, 385
+    gap = 60
+
+    for i, (char, rect, active) in enumerate(letters):
+        x = start_x + i * gap
+        pygame.draw.line(screen, (0, 0, 0), (x, y), (x + 55, y), 2)
+
+    new_y = y - 50
+    for i, char in enumerate(guests):
+        x = start_x + i * gap
+        new_rect = pygame.Rect(x, new_y, 55, 50)
+        pygame.draw.rect(screen, (250, 220, 180), new_rect)
+        pygame.draw.rect(screen, rect_border_color, new_rect, 2)
+        txt = font.render(char, True, font_color)
+        screen.blit(txt, (new_rect.x + 13, new_rect.y + 5))
+
+
+def draw_game(letters, solve):
+
+    for char, rect, active in letters:
+        if active:
+            pygame.draw.rect(screen, (250, 220, 180), rect)
+            pygame.draw.rect(screen, rect_border_color, rect, 2)
+            txt = font.render(char, True, font_color)
+            screen.blit(txt, (rect.x+13, rect.y+5))
+        else:
+            pygame.draw.rect(screen, (100, 100, 100), rect)
+
+    lines(letters)
+
+    ans(solve)
+
+
+
+
 main_word = random.choice(list(WORDS.keys()))
 shuffled = shuffle_letter(main_word)
 letters = position(shuffled)
@@ -79,8 +110,15 @@ while run:
         if event.type == pygame.QUIT:
             run = False
 
-    ans(solve)
-    draw_game(letters)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = event.pos
+            for letter_data in letters:
+                char, rect, active = letter_data
+                if active and rect.collidepoint(pos):
+                    letter_data[2] = False
+                    guests.append(char)
+
+    draw_game(letters,solve)
 
     pygame.display.update()
 
