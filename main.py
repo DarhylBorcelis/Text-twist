@@ -77,6 +77,15 @@ def lines(letters):
         pygame.draw.rect(screen, rect_border_color, new_rect, 2)
         txt = font.render(char, True, font_color)
         screen.blit(txt, (new_rect.x + 13, new_rect.y + 5))
+        
+def btn_shuffle():
+    x, y = 500, 400
+    shuffle = pygame.Rect(x, y, 80, 50)
+    pygame.draw.rect(screen, (250, 220, 180), shuffle)
+    pygame.draw.rect(screen, rect_border_color, shuffle, 2)
+    txt = small_font.render("Shuffle", True, font_color)
+    screen.blit(txt, (shuffle.x + 6, shuffle.y + 10))
+    return shuffle
 
 
 def draw_game(letters, solve):
@@ -101,6 +110,7 @@ main_word = random.choice(list(WORDS.keys()))
 shuffled = shuffle_letter(main_word)
 letters = position(shuffled)
 solve = list(WORDS[main_word])
+shuffle_btn = btn_shuffle()
 
 run = True
 while run:
@@ -112,11 +122,17 @@ while run:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = event.pos
+            
             for letter_data in letters:
                 char, rect, active = letter_data
                 if active and rect.collidepoint(pos):
                     letter_data[2] = False
                     guests.append(char)
+                    
+            if shuffle_btn.collidepoint(pos):
+                shuffled = shuffle_letter(main_word)
+                letters = position(shuffled)
+                guests = []
 
     draw_game(letters,solve)
 
