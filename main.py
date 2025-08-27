@@ -135,6 +135,7 @@ while run:
                 guests = []
 
     draw_game(letters,solve)
+    btn_shuffle()
 
     pygame.display.update()
 
