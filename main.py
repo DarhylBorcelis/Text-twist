@@ -7,7 +7,7 @@ width, height = 700, 500
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Any Game")
 
-font = pygame.font.Font("assets/font/Hevilla.ttf", 38)
+font = pygame.font.Font("assets/Font/Hevilla.ttf", 38)
 small_font = pygame.font.Font("assets/Font/Hevilla.ttf", 22)
 
 background = (181, 101, 29)
