@@ -16,21 +16,41 @@ rect_border_color = (0, 0, 0)
 font_color = (0, 0, 0)
 
 WORDS = {
-    "SHAME": {"same", "seam", "sham", "ham", "ash", "she", "me"},
-    "STONE": {"tone", "one", "not", "son", "note", "set"},
-    "GAMES": {"game", "same", "gem", "gas", "ages"},
-    "TRAIN": {"rain", "rant", "tin", "ant", "art"},
-    "PLANE": {"plan", "pane", "pen", "nap", "ape"},
-    "MOUSE": {"some", "sue", "use", "mou", "sum"},
-    "CRATE": {"race", "care", "tear", "act", "cat"},
-    "WORLD": {"word", "lord", "row", "owl", "old"},
-    "HEART": {"earth", "heat", "rat", "ear", "hat"},
-    "LIGHT": {"hit", "lit", "git", "tig", "til"}
+    "level 1": {"SHAME": {"same", "seam", "sham", "ham", "ash", "she", "me"}},
+    "level 2": {"STONE": {"tone", "one", "not", "son", "note", "set"}},
+    "level 3": {"GAMES": {"game", "same", "gem", "gas", "ages"}},
+    "level 4": {"TRAIN": {"rain", "rant", "tin", "ant", "art"}},
+    "level 5": {"PLANE": {"plan", "pane", "pen", "nap", "ape"}},
+    "level 6": {"MOUSE": {"some", "sue", "use", "mou", "sum"}},
+    "level 7": {"CRATE": {"race", "care", "tear", "act", "cat"}},
+    "level 8": {"WORLD": {"word", "lord", "row", "owl", "old"}},
+    "level 9": {"HEART": {"earth", "heat", "rat", "ear", "hat"}},
+    "level 10": {"LIGHT": {"hit", "lit", "git", "tig", "til"}}
 }
+
+
+game_state = "menu"
+selected_level = None
+main_word = ""
+shuffled = ""
+letters = []
+solve = []
 guests = []
 player_ans = []
-current_level = 0
-win = False
+
+
+def level_box(levels):
+    level_li = []
+    start_x, start_y = 155, 100
+    x_gap = 130
+    y_gap = 80
+
+    for i, num in enumerate(levels):
+        x = start_x + (i % 3) * x_gap
+        y = start_y + (i // 3) * y_gap
+        rect = pygame.Rect(x, y, 120, 50)
+        level_li.append([num, rect, True])
+    return level_li
 
 
 def shuffle_letter(word):
@@ -51,12 +71,13 @@ def position(word):
     return letters
 
 
-def ans(ans):
+def ans(solve):
     start_x, start_y = 50, 50
-    gap_x = 40
-    gap_y = 40
+    gap_x, gap_y = 40, 40
 
-    for row, word in enumerate(ans):
+    sorted_words = sorted(solve, key=lambda w: (len(w), w))
+
+    for row, word in enumerate(sorted_words):
         y = start_y + row * gap_y
         for i, char in enumerate(word):
             x = start_x + i * gap_x
@@ -69,22 +90,11 @@ def ans(ans):
                 screen.blit(txt, (rect.x + 8, rect.y + 5))
 
 
-def btn_shuffle():
-    x, y = 500, 400
-    shuffle = pygame.Rect(x, y, 80, 50)
-    pygame.draw.rect(screen, (250, 220, 180), shuffle, border_radius=10)
-    pygame.draw.rect(screen, rect_border_color, shuffle, 2, border_radius=10)
-    txt = small_font.render("Shuffle", True, font_color)
-    screen.blit(txt, (shuffle.x + 6, shuffle.y + 10))
-    return shuffle
-
-
-def btn_enter():
-    x, y = 500, 340
+def btn(x, y, name):
     enter = pygame.Rect(x, y, 80, 50)
     pygame.draw.rect(screen, (250, 220, 180), enter, border_radius=10)
     pygame.draw.rect(screen, rect_border_color, enter, 2, border_radius=10)
-    txt = small_font.render("Enter", True, font_color)
+    txt = small_font.render(name, True, font_color)
     screen.blit(txt, (enter.x + 6, enter.y + 10))
     return enter
 
@@ -107,21 +117,7 @@ def lines(letters):
         screen.blit(txt, (new_rect.x + 13, new_rect.y + 5))
 
 
-def level():
-    global current_level, main_word, shuffled, letters, solve, player_ans, win
-    current_level += 1
-    if current_level < len(WORDS):
-        main_word = random.choice(list(WORDS.keys()))
-        shuffled = shuffle_letter(main_word)
-        letters = position(shuffled)
-        solve = list(WORDS[main_word])
-        player_ans = []
-    else:
-        win = True
-
-
 def draw_game(letters, solve):
-
     for char, rect, active in letters:
         if active:
             pygame.draw.rect(screen, (250, 220, 180), rect)
@@ -132,33 +128,62 @@ def draw_game(letters, solve):
             pygame.draw.rect(screen, (100, 100, 100), rect)
 
     lines(letters)
-
     ans(solve)
 
 
-main_word = random.choice(list(WORDS.keys()))
-shuffled = shuffle_letter(main_word)
-letters = position(shuffled)
-solve = list(WORDS[main_word])
-shuffle_btn = btn_shuffle()
-enter_btn = btn_enter()
+def draw_menu(lvl):
+    for num, rect, active in lvl:
+        if active:
+            pygame.draw.rect(screen, (250, 220, 180), rect)
+            pygame.draw.rect(screen, (0, 0, 0), rect, 2)
+            txt = font.render(num, True, (0, 0, 0))
+            screen.blit(txt, (rect.x+9, rect.y+5))
+        else:
+            pygame.draw.rect(screen, (100, 100, 100), rect)
+
+
+level_names = list(WORDS.keys())
+lvl = level_box(level_names)
 
 run = True
 while run:
     screen.fill(background)
 
+    if game_state == "menu":
+        draw_menu(lvl)
+    elif game_state == "play":
+        draw_game(letters, solve)
+        shuffle_btn = btn(x=500, y=400, name="Shuffle")
+        enter_btn = btn(x=500, y=340, name="Enter")
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = event.pos
+        if game_state == "menu":
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = event.pos
+                for level_data in lvl:
+                    name, rect, active = level_data
+                    if active and rect.collidepoint(pos):
+                        selected_level = name
+                        main_word = list(WORDS[selected_level].keys())[0]
+                        shuffled = shuffle_letter(main_word)
+                        letters = position(shuffled)
+                        solve = list(WORDS[selected_level][main_word])
+                        guests = []
+                        player_ans = []
+                        game_state = "play"
 
-            for letter_data in letters:
-                char, rect, active = letter_data
-                if active and rect.collidepoint(pos):
-                    letter_data[2] = False
-                    guests.append(char)
+        elif game_state == "play":
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = event.pos
+
+                for letter_data in letters:
+                    char, rect, active = letter_data
+                    if active and rect.collidepoint(pos):
+                        letter_data[2] = False
+                        guests.append(char)
 
                 if enter_btn.collidepoint(pos):
                     now = "".join(guests).lower()
@@ -167,14 +192,10 @@ while run:
                     guests = []
                     letters = position(shuffled)
 
-            if shuffle_btn.collidepoint(pos):
-                shuffled = shuffle_letter(main_word)
-                letters = position(shuffled)
-                guests = []
-
-    draw_game(letters, solve)
-    btn_shuffle()
-    btn_enter()
+                if shuffle_btn.collidepoint(pos):
+                    shuffled = shuffle_letter(main_word)
+                    letters = position(shuffled)
+                    guests = []
 
     pygame.display.update()
 
