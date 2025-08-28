@@ -28,6 +28,10 @@ WORDS = {
     "LIGHT": {"hit", "lit", "git", "tig", "til"}
 }
 guests = []
+player_ans = []
+current_level = 0
+win = False
+
 
 def shuffle_letter(word):
     letter = list(word)
@@ -37,7 +41,7 @@ def shuffle_letter(word):
 
 def position(word):
     letters = []
-    start_x, y = 180, 400  
+    start_x, y = 180, 400
     gap = 60
 
     for i, char in enumerate(word):
@@ -60,6 +64,30 @@ def ans(ans):
             pygame.draw.rect(screen, (255, 255, 255), rect)
             pygame.draw.rect(screen, (0, 0, 0), rect, 2)
 
+            if word in player_ans:
+                txt = small_font.render(char, True, font_color)
+                screen.blit(txt, (rect.x + 8, rect.y + 5))
+
+
+def btn_shuffle():
+    x, y = 500, 400
+    shuffle = pygame.Rect(x, y, 80, 50)
+    pygame.draw.rect(screen, (250, 220, 180), shuffle, border_radius=10)
+    pygame.draw.rect(screen, rect_border_color, shuffle, 2, border_radius=10)
+    txt = small_font.render("Shuffle", True, font_color)
+    screen.blit(txt, (shuffle.x + 6, shuffle.y + 10))
+    return shuffle
+
+
+def btn_enter():
+    x, y = 500, 340
+    enter = pygame.Rect(x, y, 80, 50)
+    pygame.draw.rect(screen, (250, 220, 180), enter, border_radius=10)
+    pygame.draw.rect(screen, rect_border_color, enter, 2, border_radius=10)
+    txt = small_font.render("Enter", True, font_color)
+    screen.blit(txt, (enter.x + 6, enter.y + 10))
+    return enter
+
 
 def lines(letters):
     start_x, y = 180, 385
@@ -77,15 +105,19 @@ def lines(letters):
         pygame.draw.rect(screen, rect_border_color, new_rect, 2)
         txt = font.render(char, True, font_color)
         screen.blit(txt, (new_rect.x + 13, new_rect.y + 5))
-        
-def btn_shuffle():
-    x, y = 500, 400
-    shuffle = pygame.Rect(x, y, 80, 50)
-    pygame.draw.rect(screen, (250, 220, 180), shuffle)
-    pygame.draw.rect(screen, rect_border_color, shuffle, 2)
-    txt = small_font.render("Shuffle", True, font_color)
-    screen.blit(txt, (shuffle.x + 6, shuffle.y + 10))
-    return shuffle
+
+
+def level():
+    global current_level, main_word, shuffled, letters, solve, player_ans, win
+    current_level += 1
+    if current_level < len(WORDS):
+        main_word = random.choice(list(WORDS.keys()))
+        shuffled = shuffle_letter(main_word)
+        letters = position(shuffled)
+        solve = list(WORDS[main_word])
+        player_ans = []
+    else:
+        win = True
 
 
 def draw_game(letters, solve):
@@ -104,13 +136,12 @@ def draw_game(letters, solve):
     ans(solve)
 
 
-
-
 main_word = random.choice(list(WORDS.keys()))
 shuffled = shuffle_letter(main_word)
 letters = position(shuffled)
 solve = list(WORDS[main_word])
 shuffle_btn = btn_shuffle()
+enter_btn = btn_enter()
 
 run = True
 while run:
@@ -122,20 +153,28 @@ while run:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = event.pos
-            
+
             for letter_data in letters:
                 char, rect, active = letter_data
                 if active and rect.collidepoint(pos):
                     letter_data[2] = False
                     guests.append(char)
-                    
+
+                if enter_btn.collidepoint(pos):
+                    now = "".join(guests).lower()
+                    if now in solve and now not in player_ans:
+                        player_ans.append(now)
+                    guests = []
+                    letters = position(shuffled)
+
             if shuffle_btn.collidepoint(pos):
                 shuffled = shuffle_letter(main_word)
                 letters = position(shuffled)
                 guests = []
 
-    draw_game(letters,solve)
+    draw_game(letters, solve)
     btn_shuffle()
+    btn_enter()
 
     pygame.display.update()
 
