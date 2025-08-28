@@ -10,7 +10,9 @@ pygame.display.set_caption("Any Game")
 font = pygame.font.Font("assets/Font/Hevilla.ttf", 38)
 small_font = pygame.font.Font("assets/Font/Hevilla.ttf", 22)
 
-background = (181, 101, 29)
+background = pygame.image.load("assets/background/menu_2.png")
+background = pygame.transform.scale(background, (width, height))
+
 white = (255, 255, 255)
 rect_border_color = (0, 0, 0)
 font_color = (0, 0, 0)
@@ -25,9 +27,25 @@ WORDS = {
     "level 7": {"CRATE": {"race", "care", "tear", "act", "cat"}},
     "level 8": {"WORLD": {"word", "lord", "row", "owl", "old"}},
     "level 9": {"HEART": {"earth", "heat", "rat", "ear", "hat"}},
-    "level 10": {"LIGHT": {"hit", "lit", "git", "tig", "til"}}
+    "level 10": {"LIGHT": {"hit", "lit", "git", "tig", "til"}},
+    "level 11": {"LIGHT": {"hit", "lit", "git", "tig", "til"}},
+    "level 12": {"LIGHT": {"hit", "lit", "git", "tig", "til"}}
 }
 
+FOOD = {
+    "level 1": {"LIGHT": {"same", "seam", "sham", "ham", "ash", "she", "me"}},
+    "level 2": {"STONE": {"tone", "one", "not", "son", "note", "set"}},
+    "level 3": {"GAMES": {"game", "same", "gem", "gas", "ages"}},
+    "level 4": {"TRAIN": {"rain", "rant", "tin", "ant", "art"}},
+    "level 5": {"PLANE": {"plan", "pane", "pen", "nap", "ape"}},
+    "level 6": {"MOUSE": {"some", "sue", "use", "mou", "sum"}},
+    "level 7": {"CRATE": {"race", "care", "tear", "act", "cat"}},
+    "level 8": {"WORLD": {"word", "lord", "row", "owl", "old"}},
+    "level 9": {"HEART": {"earth", "heat", "rat", "ear", "hat"}},
+    "level 10": {"LIGHT": {"hit", "lit", "git", "tig", "til"}},
+    "level 11": {"LIGHT": {"hit", "lit", "git", "tig", "til"}},
+    "level 12": {"LIGHT": {"hit", "lit", "git", "tig", "til"}}
+}
 
 game_state = "menu"
 selected_level = None
@@ -90,12 +108,12 @@ def ans(solve):
                 screen.blit(txt, (rect.x + 8, rect.y + 5))
 
 
-def btn(x, y, name):
-    enter = pygame.Rect(x, y, 80, 50)
+def btn(x, y, name, size_x=80, size_y=50, pos_x=6, pos_y=10, font=small_font):
+    enter = pygame.Rect(x, y, size_x, size_y)
     pygame.draw.rect(screen, (250, 220, 180), enter, border_radius=10)
     pygame.draw.rect(screen, rect_border_color, enter, 2, border_radius=10)
-    txt = small_font.render(name, True, font_color)
-    screen.blit(txt, (enter.x + 6, enter.y + 10))
+    txt = font.render(name, True, font_color)
+    screen.blit(txt, (enter.x + pos_x, enter.y + pos_y))
     return enter
 
 
@@ -111,8 +129,9 @@ def lines(letters):
     for i, char in enumerate(guests):
         x = start_x + i * gap
         new_rect = pygame.Rect(x, new_y, 55, 50)
-        pygame.draw.rect(screen, (250, 220, 180), new_rect)
-        pygame.draw.rect(screen, rect_border_color, new_rect, 2)
+        pygame.draw.rect(screen, (250, 220, 180), new_rect, border_radius=15)
+        pygame.draw.rect(screen, rect_border_color,
+                         new_rect, 2, border_radius=15)
         txt = font.render(char, True, font_color)
         screen.blit(txt, (new_rect.x + 13, new_rect.y + 5))
 
@@ -120,12 +139,14 @@ def lines(letters):
 def draw_game(letters, solve):
     for char, rect, active in letters:
         if active:
-            pygame.draw.rect(screen, (250, 220, 180), rect)
-            pygame.draw.rect(screen, rect_border_color, rect, 2)
+            pygame.draw.rect(screen, (250, 220, 180), rect,
+                             border_radius=15)
+            pygame.draw.rect(screen, rect_border_color,
+                             rect, 2, border_radius=15)
             txt = font.render(char, True, font_color)
             screen.blit(txt, (rect.x+13, rect.y+5))
         else:
-            pygame.draw.rect(screen, (100, 100, 100), rect)
+            pygame.draw.rect(screen, (100, 100, 100), rect, border_radius=15)
 
     lines(letters)
     ans(solve)
@@ -133,13 +154,10 @@ def draw_game(letters, solve):
 
 def draw_menu(lvl):
     for num, rect, active in lvl:
-        if active:
-            pygame.draw.rect(screen, (250, 220, 180), rect)
-            pygame.draw.rect(screen, (0, 0, 0), rect, 2)
-            txt = font.render(num, True, (0, 0, 0))
-            screen.blit(txt, (rect.x+9, rect.y+5))
-        else:
-            pygame.draw.rect(screen, (100, 100, 100), rect)
+        pygame.draw.rect(screen, (250, 220, 180), rect)
+        pygame.draw.rect(screen, (0, 0, 0), rect, 2)
+        txt = font.render(num, True, (0, 0, 0))
+        screen.blit(txt, (rect.x+9, rect.y+5))
 
 
 level_names = list(WORDS.keys())
@@ -147,14 +165,38 @@ lvl = level_box(level_names)
 
 run = True
 while run:
-    screen.fill(background)
+    screen.blit(background, (0, 0))
 
     if game_state == "menu":
+        menu_btn = btn(x=120, y=280, name=" Menu", size_x=120,
+                       size_y=50, pos_x=7, pos_y=8, font=font)
+        level_btn = btn(x=270, y=280, name=" Level",
+                        size_x=120, size_y=50,  pos_x=7, pos_y=8, font=font)
+        category_btn = btn(x=420, y=280, name="Category",
+                           size_x=160, size_y=50,  pos_x=7, pos_y=8, font=font)
+
+    elif game_state == "level":
         draw_menu(lvl)
+
     elif game_state == "play":
         draw_game(letters, solve)
+        level_btn = btn(x=500, y=220, name=" Level")
+        menu_btn = btn(x=500, y=280, name=" Menu")
         shuffle_btn = btn(x=500, y=400, name="Shuffle")
         enter_btn = btn(x=500, y=340, name="Enter")
+
+        if len(player_ans) == len(solve):
+            current_index = level_names.index(selected_level)
+            if current_index + 1 < len(level_names):
+                selected_level = level_names[current_index + 1]
+                main_word = list(WORDS[selected_level].keys())[0]
+                shuffled = shuffle_letter(main_word)
+                letters = position(shuffled)
+                solve = list(WORDS[selected_level][main_word])
+                guests = []
+                player_ans = []
+            else:
+                game_state = "menu"
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -163,6 +205,14 @@ while run:
         if game_state == "menu":
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = event.pos
+
+                if level_btn.collidepoint(pos):
+                    game_state = "level"
+
+        elif game_state == "level":
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = event.pos
+
                 for level_data in lvl:
                     name, rect, active = level_data
                     if active and rect.collidepoint(pos):
@@ -196,6 +246,12 @@ while run:
                     shuffled = shuffle_letter(main_word)
                     letters = position(shuffled)
                     guests = []
+
+                if menu_btn.collidepoint(pos):
+                    game_state = "menu"
+
+                if level_btn.collidepoint(pos):
+                    game_state = "level"
 
     pygame.display.update()
 
