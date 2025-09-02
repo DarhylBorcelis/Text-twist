@@ -32,21 +32,6 @@ WORDS = {
     "level 12": {"LIGHT": {"hit", "lit", "git", "tig", "til"}}
 }
 
-FOOD = {
-    "level 1": {"LIGHT": {"same", "seam", "sham", "ham", "ash", "she", "me"}},
-    "level 2": {"STONE": {"tone", "one", "not", "son", "note", "set"}},
-    "level 3": {"GAMES": {"game", "same", "gem", "gas", "ages"}},
-    "level 4": {"TRAIN": {"rain", "rant", "tin", "ant", "art"}},
-    "level 5": {"PLANE": {"plan", "pane", "pen", "nap", "ape"}},
-    "level 6": {"MOUSE": {"some", "sue", "use", "mou", "sum"}},
-    "level 7": {"CRATE": {"race", "care", "tear", "act", "cat"}},
-    "level 8": {"WORLD": {"word", "lord", "row", "owl", "old"}},
-    "level 9": {"HEART": {"earth", "heat", "rat", "ear", "hat"}},
-    "level 10": {"LIGHT": {"hit", "lit", "git", "tig", "til"}},
-    "level 11": {"LIGHT": {"hit", "lit", "git", "tig", "til"}},
-    "level 12": {"LIGHT": {"hit", "lit", "git", "tig", "til"}}
-}
-
 game_state = "menu"
 selected_level = None
 main_word = ""
