@@ -13,11 +13,13 @@ small_font = pygame.font.Font("assets/Font/Hevilla.ttf", 22)
 background = pygame.image.load("assets/background/menu_2.png")
 background = pygame.transform.scale(background, (width, height))
 
+level_image = "assets/background/menu.png"
+click_sound = pygame.mixer.Sound("assets/sound/bubble.mp3")
+
 white = (255, 255, 255)
 rect_border_color = (0, 0, 0)
 font_color = (0, 0, 0)
 
-level_image = "assets/background/menu.png"
 
 WORDS = {
     "level 1": {"SHAME": {"same", "seam", "sham", "ham", "ash", "she", "me"}},
@@ -207,6 +209,7 @@ while run:
                 pos = event.pos
 
                 if level_btn.collidepoint(pos):
+                    click_sound.play()
                     game_state = "level"
 
         elif game_state == "level":
@@ -216,6 +219,7 @@ while run:
                 for level_data in lvl:
                     name, rect, active = level_data
                     if active and rect.collidepoint(pos):
+                        click_sound.play()
                         selected_level = name
                         main_word = list(WORDS[selected_level].keys())[0]
                         shuffled = shuffle_letter(main_word)
@@ -232,10 +236,12 @@ while run:
                 for letter_data in letters:
                     char, rect, active = letter_data
                     if active and rect.collidepoint(pos):
+                        click_sound.play()
                         letter_data[2] = False
                         guests.append(char)
 
                 if enter_btn.collidepoint(pos):
+                    click_sound.play()
                     now = "".join(guests).lower()
                     if now in solve and now not in player_ans:
                         player_ans.append(now)
@@ -243,15 +249,18 @@ while run:
                     letters = position(shuffled)
 
                 if shuffle_btn.collidepoint(pos):
+                    click_sound.play()
                     shuffled = shuffle_letter(main_word)
                     letters = position(shuffled)
                     guests = []
 
                 if menu_btn.collidepoint(pos):
+                    click_sound.play()
                     game_state = "menu"
 
                 if level_btn.collidepoint(pos):
                     game_state = "level"
+                    click_sound.play()
 
     pygame.display.update()
 
