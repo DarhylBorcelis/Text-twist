@@ -17,6 +17,8 @@ white = (255, 255, 255)
 rect_border_color = (0, 0, 0)
 font_color = (0, 0, 0)
 
+level_image = "assets/background/menu.png"
+
 WORDS = {
     "level 1": {"SHAME": {"same", "seam", "sham", "ham", "ash", "she", "me"}},
     "level 2": {"STONE": {"tone", "one", "not", "son", "note", "set"}},
@@ -93,13 +95,13 @@ def ans(solve):
                 screen.blit(txt, (rect.x + 8, rect.y + 5))
 
 
-def btn(x, y, name, size_x=80, size_y=50, pos_x=6, pos_y=10, font=small_font):
-    enter = pygame.Rect(x, y, size_x, size_y)
-    pygame.draw.rect(screen, (250, 220, 180), enter, border_radius=10)
-    pygame.draw.rect(screen, rect_border_color, enter, 2, border_radius=10)
-    txt = font.render(name, True, font_color)
-    screen.blit(txt, (enter.x + pos_x, enter.y + pos_y))
-    return enter
+# def btn(x, y, name, size_x=80, size_y=50, pos_x=6, pos_y=10, font=small_font):
+#     enter = pygame.Rect(x, y, size_x, size_y)
+#     pygame.draw.rect(screen, (250, 220, 180), enter, border_radius=10)
+#     pygame.draw.rect(screen, rect_border_color, enter, 2, border_radius=10)
+#     txt = font.render(name, True, font_color)
+#     screen.blit(txt, (enter.x + pos_x, enter.y + pos_y))
+#     return enter
 
 
 def lines(letters):
@@ -138,11 +140,23 @@ def draw_game(letters, solve):
 
 
 def draw_menu(lvl):
+    size_x, size_y = 120, 50
     for num, rect, active in lvl:
-        pygame.draw.rect(screen, (250, 220, 180), rect)
-        pygame.draw.rect(screen, (0, 0, 0), rect, 2)
+        button_img = pygame.image.load(level_image)
+        button_img = pygame.transform.scale(button_img, (size_x, size_y))
+        screen.blit(button_img, rect)
         txt = font.render(num, True, (0, 0, 0))
         screen.blit(txt, (rect.x+9, rect.y+5))
+
+
+def image_btn(start_x=120, start_y=280, size_x=80, size_y=50, pos_x=6, pos_y=10, name="none", font=small_font, image="assets/background/menu.png"):
+    button_img = pygame.image.load(image)
+    button_img = pygame.transform.scale(button_img, (size_x, size_y))
+    rect = pygame.Rect(start_x, start_y, size_x, size_y)
+    txt = font.render(name, True, font_color)
+    screen.blit(button_img, rect)
+    screen.blit(txt, (rect.x + pos_x, rect.y+pos_y))
+    return rect
 
 
 level_names = list(WORDS.keys())
@@ -153,22 +167,23 @@ while run:
     screen.blit(background, (0, 0))
 
     if game_state == "menu":
-        menu_btn = btn(x=120, y=280, name=" Menu", size_x=120,
-                       size_y=50, pos_x=7, pos_y=8, font=font)
-        level_btn = btn(x=270, y=280, name=" Level",
-                        size_x=120, size_y=50,  pos_x=7, pos_y=8, font=font)
-        category_btn = btn(x=420, y=280, name="Category",
-                           size_x=160, size_y=50,  pos_x=7, pos_y=8, font=font)
+        level_btn = image_btn(start_x=120, start_y=280, size_x=120,
+                              size_y=60, pos_x=35, pos_y=20, name="Level", font=small_font,
+                              image="assets/background/menu.png")
+
+        category_btn = image_btn(start_x=280, start_y=280, size_x=120,
+                                 size_y=60, pos_x=10, pos_y=10, name="Category", font=small_font,
+                                 image="assets/background/menu.png")
 
     elif game_state == "level":
         draw_menu(lvl)
 
     elif game_state == "play":
         draw_game(letters, solve)
-        level_btn = btn(x=500, y=220, name=" Level")
-        menu_btn = btn(x=500, y=280, name=" Menu")
-        shuffle_btn = btn(x=500, y=400, name="Shuffle")
-        enter_btn = btn(x=500, y=340, name="Enter")
+        level_btn = image_btn(start_x=500, start_y=220, name=" Level")
+        menu_btn = image_btn(start_x=500, start_y=280, name=" Menu")
+        shuffle_btn = image_btn(start_x=500, start_y=400, name="Shuffle")
+        enter_btn = image_btn(start_x=500, start_y=340, name="Enter")
 
         if len(player_ans) == len(solve):
             current_index = level_names.index(selected_level)
