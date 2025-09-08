@@ -26,6 +26,7 @@ BORD_IMAGE = "assets/button/bord.png"
 PLACEHOLDER_IMAGE = "assets/button/ans.png"
 BUTTON_IMAGE = "assets/button/button.png"
 LIFE_IMAGE = "assets/button/life.png"
+BANER_IMAGE = "assets/button/baner.png"
 
 
 # Dictionary
@@ -119,14 +120,16 @@ def button_box():
     black_bord = Box(200, 60, 600, 300, " ", BORD_IMAGE, FONT)
     ans_placeholder = Box(250, 400, 500, 50, ans, PLACEHOLDER_IMAGE, FONT)
     life = Box(830, 30, 140, 50, "", LIFE_IMAGE, FONT)
+    baner = Box(0, 30, 200, 220, "", BANER_IMAGE, FONT)
 
     enter = Box(850, 100, 100, 50, "Enter", BUTTON_IMAGE, FONT)
     delete = Box(850, 170, 100, 50, "Delete", BUTTON_IMAGE, FONT)
     shuffle = Box(850, 240, 100, 50, "Shuffle", BUTTON_IMAGE, FONT)
 
-    # Draw border and life
+    # Draw Design
     black_bord.draw(SCREEN)
     life.draw(SCREEN)
+    baner.draw(SCREEN)
 
     # Update answer placeholder before drawing
     ans_placeholder.update_text(name=ans, color=WHITE)
