@@ -170,19 +170,14 @@ while run:
 
     if game_state == "menu":
         level_btn = image_btn(start_x=120, start_y=280, size_x=120,
-                              size_y=60, pos_x=35, pos_y=20, name="Level", font=small_font,
+                              size_y=60, pos_x=35, pos_y=20, name="Start", font=small_font,
                               image="assets/background/menu.png")
-
-        category_btn = image_btn(start_x=280, start_y=280, size_x=120,
-                                 size_y=60, pos_x=10, pos_y=10, name="Category", font=small_font,
-                                 image="assets/background/menu.png")
 
     elif game_state == "level":
         draw_menu(lvl)
 
     elif game_state == "play":
         draw_game(letters, solve)
-        level_btn = image_btn(start_x=500, start_y=220, name=" Level")
         menu_btn = image_btn(start_x=500, start_y=280, name=" Menu")
         shuffle_btn = image_btn(start_x=500, start_y=400, name="Shuffle")
         enter_btn = image_btn(start_x=500, start_y=340, name="Enter")
@@ -261,6 +256,16 @@ while run:
                 if level_btn.collidepoint(pos):
                     game_state = "level"
                     click_sound.play()
+
+            if event.type == pygame.KEYDOWN:
+                char = event.unicode.upper()
+                for letter_data in letters:
+                    letter_char, rect, active = letter_data
+                    if active and letter_char == char:
+                        click_sound.play()
+                        letter_data[2] = False
+                        guests.append(char)
+                        break
 
     pygame.display.update()
 
