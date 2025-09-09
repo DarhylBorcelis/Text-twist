@@ -7,9 +7,6 @@ pygame.init()
 SCREEN = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption("Any Game")
 
-background = pygame.image.load("assets/background/menu_2.png")
-background = pygame.transform.scale(background, (1000, 600))
-
 # Fonts
 FONT = pygame.font.Font("assets/Font/Hevilla.ttf", 22)
 
@@ -28,6 +25,9 @@ BUTTON_IMAGE = "assets/button/button.png"
 LIFE_IMAGE = "assets/button/life.png"
 BANER_IMAGE = "assets/button/baner.png"
 
+# Backround image
+background = pygame.image.load(BACKGROUND_IMAGE)
+background = pygame.transform.scale(background, (1000, 600))
 
 # Dictionary
 FOODS = {
