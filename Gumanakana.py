@@ -47,7 +47,7 @@ FOOD = {
 
 # Database
 category = FOOD
-game_state = "Level"
+game_state = "Menu"
 current_level = 1
 attempt = 0
 letters = []
@@ -264,7 +264,7 @@ while run:
 
                 if enter_btn.rect.collidepoint(pos):  # for Enter
                     now = "".join(guests).upper()
-                    guests = []
+
                     if now in Level_Words and now not in player_ans:
                         player_ans.append(now)
                         shuffled_letters = rand_Level_Words(
@@ -274,11 +274,13 @@ while run:
                         else:
                             print("You win")
 
-                    elif now not in player_ans:
+                    elif now not in Level_Words:
                         print(player_ans)
                         attempt += 1
                         for box in choices:
                             box.active = True
+
+                    guests = []
 
                     if attempt == 4:
                         print("You Loose")
@@ -318,7 +320,7 @@ while run:
                         else:
                             print("You win")
 
-                    elif now not in player_ans:
+                    elif now not in Level_Words:
                         attempt += 1
                         for box in choices:
                             box.active = True

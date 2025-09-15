@@ -25,6 +25,8 @@ background = pygame.transform.scale(background, (screen_width, screen_hight))
 game_state = "Main_Menu"
 game_category = "Animal"
 game_level = 1
+player_ans = []
+CATEGORY = {}
 
 # Dictionary
 if game_category == "Animal":
@@ -113,8 +115,36 @@ class World:
 
 
 class Game_play():
-    def __init__(self, rect, category):
-        pass
+    def __init__(self, category, game_level):
+        image = pygame.image.load("assets/button/letters.png")
+        image = image = pygame.transform.scale(image, (80, 50))
+
+    def rand_Level_Words(self):
+        self.word = random.choice(self.available_word)
+        self.shuffled = random.shuffle(list(self.word))
+
+
+def Rand_Level_Words(word, player_ans):
+    available_words = [w for w in word if w not in player_ans]
+    if not available_words:
+        return []  # all words found
+    else:
+        return random.choice(available_words)
+
+
+def Shuffled(ans_word):
+    letters = list(ans_word)
+    shuffled = "".join(letters)
+    while shuffled == ans_word:
+        random.shuffle(letters)
+        shuffled = "".join(letters)
+    return shuffled
+
+
+# Update var
+Level_words = CATEGORY[game_level]
+Ans_word = Rand_Level_Words(Level_words, player_ans)
+choices = Shuffled(Ans_word)
 
 
 # Buttons
