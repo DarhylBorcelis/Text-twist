@@ -243,6 +243,8 @@ Game_delete_btn = Button(690, 35, BUTTON_IMAGE, (400, 350),
                          "Delete", key=pygame.K_DELETE)
 Game_shuffle_btn = Button(690, 85, BUTTON_IMAGE, (400, 350),
                           "Shuffle", key=pygame.K_s)
+Game_back_btn = Button(690, -25, BUTTON_IMAGE, (100, 100),
+                       "Back", key=pygame.K_ESCAPE)
 
 Level_food_btn = Button(430, 60, PLAY_IMAGE, (120, 40), "Food")
 Level_animal_btn = Button(430, 230, PLAY_IMAGE, (120, 40), "animal")
@@ -346,6 +348,9 @@ while run:
             if gameplay.Rand_Level_Words(player_ans):  # pick a word
                 gameplay.Shuffled()                    # shuffle it
                 gameplay.Draw_ans()
+
+        if Game_back_btn.draw(SCREEN):
+            game_state = "Level_Menu"
 
     # Game Condition
     for event in pygame.event.get():
