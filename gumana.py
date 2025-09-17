@@ -63,7 +63,7 @@ ANIMAL_BANNER = "assets/button/animal_banner.png"
 
 if game_category == "Animal":
     BUTTON_IMAGE = "assets/button/button.png"
-    BACKGROUND_IMAGE = "assets/button/background.png"
+    BACKGROUND_IMAGE = "assets/button/game_play.png"
     PLAY_IMAGE = "assets/button/ans.png"
     BANER_IMAGE = "assets/button/banner.png"
     BOARD_IMAGE = "assets/button/bord.png"
@@ -84,53 +84,47 @@ class Button:
         self.font = font
         self.text_color = text_color
 
-        # for keyboard
+        # Keyboard
         self.key = key
+        self.key_click = False   # initialize here
 
         if self.font and self.text != "":
             self.text_surface = self.font.render(
-                self.text, True, self.text_color)
+                self.text, True, self.text_color
+            )
             self.text_rect = self.text_surface.get_rect(
-                center=self.rect.center)
+                center=self.rect.center
+            )
         else:
             self.text_surface = None
 
-    def draw(self, SCREEN):
+    def event_handler(self):
         action = False
-        # Draw buttons
-        SCREEN.blit(self.image, self.rect)
+        # Keyboard input
+        keys = pygame.key.get_pressed()
+        if self.key:
+            if not keys[self.key] and self.key_click:
+                action = True
+                self.key_click = False
+            elif keys[self.key]:
+                self.key_click = True
 
+        return action
+
+    def draw(self, SCREEN):
+        # Draw button
+        SCREEN.blit(self.image, self.rect)
         # Draw text
         if self.text_surface:
             SCREEN.blit(self.text_surface, self.text_rect)
 
-        # Get mouse position
-        pos = pygame.mouse.get_pos()
-
-        # Check if click
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.click == False:
-                action = True
-                self.click = True
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.click = False
-
-        # --- Keyboard input ---
-        keys = pygame.key.get_pressed()
-        if self.key:
-            if keys[self.key] and not self.key_click:
-                action = True
-                self.key_click = True
-            if not keys[self.key]:
-                self.key_click = False
-
-        return action
-
 
 class World:
-    def __init__(self):
+    def __init__(self, img):
         # Keep a list of all "design"
         self.designs = []
+        background = pygame.image.load(img)
+        self.background_img = pygame.transform.scale(background, (1000, 600))
 
     def text():
         pass
@@ -142,6 +136,8 @@ class World:
         self.designs.append((image, rect))
 
     def draw(self, SCREEN):
+        SCREEN.blit(self.background_img, (0, 0))  # Draw background
+
         for img, rect in self.designs:
             SCREEN.blit(img, rect)
 
@@ -149,15 +145,34 @@ class World:
 class Game_play:
     def __init__(self, category, game_level):
         self.letters = []
+        self.used_stack = []
         self.category = category
         self.level_words = category[game_level]
+        self.guest = []
         self.Ans_word = ""
         self.choices = ""
 
-    def update(self, SCREEN):
-        for img, rect, text_surface, text_rect, Active in self.letters:
-            SCREEN.blit(img, rect)
-            SCREEN.blit(text_surface, text_rect)
+    def Update_2(self, event):
+        # Mouse input
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            pos = event.pos
+            for i, letter in enumerate(self.letters):
+                if letter["rect"].collidepoint(pos) and letter["active"]:
+                    self.guest.append(letter["char"])
+                    letter["active"] = False
+                    self.used_stack.append(i)
+                    break
+
+    def Draw(self, SCREEN):
+        for letter in self.letters:
+            SCREEN.blit(letter["img"], letter["rect"])
+            if letter["active"]:
+                SCREEN.blit(letter["text_surface"], letter["text_rect"])
+
+        guess_text = "".join(self.guest)
+        x_cord = (1000 - (len(self.choices) * 30)) // 2
+        txt_surf = FONT.render(guess_text, True, WHITE)
+        SCREEN.blit(txt_surf, (x_cord, 413))
 
     def Rand_Level_Words(self, player_ans):
         available_words = [w for w in self.level_words if w not in player_ans]
@@ -173,14 +188,16 @@ class Game_play:
             return
         letters = list(self.Ans_word)
         shuffled = "".join(letters)
-        while shuffled == self.Ans_word:  # make sure it changes
+        while shuffled == self.Ans_word:
             random.shuffle(letters)
             shuffled = "".join(letters)
         self.choices = shuffled
 
-    def Draw_ans(self):
-        # Clear previous letters
+    def Update_ans(self):
+        # Clear previous letters and used stack
         self.letters = []
+        self.used_stack = []
+        self.guest = []
 
         base_img = pygame.image.load("assets/button/letters.png")
         base_img = pygame.transform.scale(base_img, (80, 50))
@@ -193,11 +210,35 @@ class Game_play:
             rect.x = x_cord + i * 90
             rect.y = y_cord
 
-            # Correct font render (second param = anti-aliasing)
             text_surface = FONT.render(char, True, WHITE)
             text_rect = text_surface.get_rect(center=rect.center)
 
-            self.letters.append((img, rect, text_surface, text_rect, True))
+            # store and name
+            self.letters.append({
+                "img": img,
+                "rect": rect,
+                "char": char,
+                "text_surface": text_surface,
+                "text_rect": text_rect,
+                "active": True
+            })
+
+    def delete_last_letter(self):
+        if not self.guest or not self.used_stack:
+            return
+        # pop last guessed char
+        self.guest.pop()
+        # restore the most recently used letter
+        last_index = self.used_stack.pop()
+        self.letters[last_index]["active"] = True
+
+    def reset_all_letters(self):
+        self.guest = []
+        # restore all letters to active
+        for i in self.used_stack:
+            self.letters[i]["active"] = True
+        # clear the stack
+        self.used_stack = []
 
 
 class Level:
@@ -223,44 +264,69 @@ class Level:
             text_surface = BIG_FONT.render(str(level_num), True, WHITE)
             text_rect = text_surface.get_rect(center=rect.center)
 
-            self.levels.append([img, rect, text_surface, text_rect, True])
+            self.levels.append({
+                "img": img,
+                "rect": rect,
+                "lvl": level_num,
+                "text_surface": text_surface,
+                "text_rect": text_rect,
+                "active": True
+            })
+
+    def update(self, event):
+        # Mouse input
+        clicked_level = None
+        pos = pygame.mouse.get_pos()
+        for level in self.levels:
+            if level["rect"].collidepoint(pos):
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if level["active"]:   # only selectable if still active
+                        clicked_level = level["lvl"]
+
+        return clicked_level
 
     def draw(self, SCREEN):
-        for img, rect, text_surface, text_rect, active in self.levels:
-            SCREEN.blit(img, rect)
-            SCREEN.blit(text_surface, text_rect)
+        for Level in self.levels:
+            SCREEN.blit(Level["img"], Level["rect"])
+            SCREEN.blit(Level["text_surface"], Level["text_rect"])
 
 
-# Buttons
+# main menu Buttons
 Menu_play_btn = Button(430, 280, PLAY_IMAGE, (120, 60),
                        "Play", key=pygame.K_RETURN)
 Menu_exit_btn = Button(430, 350, PLAY_IMAGE, (120, 60),
                        "Exit", key=pygame.K_ESCAPE)
 
-Game_enter_btn = Button(690, -15, BUTTON_IMAGE, (400, 350),
+# Game play buttons
+Game_enter_btn = Button(800, 95, BUTTON_IMAGE, (150, 50),
                         "Enter", key=pygame.K_RETURN)
-Game_delete_btn = Button(690, 35, BUTTON_IMAGE, (400, 350),
+Game_delete_btn = Button(800, 145, BUTTON_IMAGE, (150, 50),
                          "Delete", key=pygame.K_DELETE)
-Game_shuffle_btn = Button(690, 85, BUTTON_IMAGE, (400, 350),
+Game_shuffle_btn = Button(800, 195, BUTTON_IMAGE, (150, 50),
                           "Shuffle", key=pygame.K_s)
-Game_back_btn = Button(690, -25, BUTTON_IMAGE, (100, 100),
+Game_back_btn = Button(800, -10, BUTTON_IMAGE, (100, 50),
                        "Back", key=pygame.K_ESCAPE)
 
-Level_food_btn = Button(430, 60, PLAY_IMAGE, (120, 40), "Food")
-Level_animal_btn = Button(430, 230, PLAY_IMAGE, (120, 40), "animal")
-Level_place_btn = Button(430, 400, PLAY_IMAGE, (120, 40), "Place")
+# level buttons
+Level_back_btn = Button(690, -10, BUTTON_IMAGE, (100, 50),
+                        "Back", key=pygame.K_ESCAPE)
+Level_food_btn = Button(430, 60, PLAY_IMAGE, (120, 40), "Food", key=pygame.K_f)
+Level_animal_btn = Button(430, 230, PLAY_IMAGE,
+                          (120, 40), "animal", key=pygame.K_a)
+Level_place_btn = Button(430, 400, PLAY_IMAGE,
+                         (120, 40), "Place", key=pygame.K_p)
 
-# World
-world = World()
-# Add designs
-world.add_design(BACKGROUND_IMAGE, 0,
-                 0, screen_width, screen_hight)  # Background
-world.add_design(BOARD_IMAGE, 150, -190, 700, 800)   # Black Board
-world.add_design(BANER_IMAGE, 50, 30, 130, 210)  # Banner
-world.add_design(PLACEHOLDER_IMAGE, 250, 400, 500, 50)  # Ans Placeholder
+# game play World
+Game_play_world = World("assets/button/game_play.png")
+Game_play_world.add_design(BACKGROUND_IMAGE, 0,
+                           0, screen_width, screen_hight)  # Background
+Game_play_world.add_design(BOARD_IMAGE, 150, -190, 700, 800)   # Black Board
+Game_play_world.add_design(BANER_IMAGE, 50, 30, 130, 210)  # Banner
+Game_play_world.add_design(PLACEHOLDER_IMAGE, 250,
+                           400, 500, 50)  # Ans Placeholder
 
-# Level
-level_word = World()
+# Level world
+level_word = World("assets/button/level_menu.png")
 level_word.add_design("assets/button/top_level.png", 5, -5, 1000, 80)
 level_word.add_design("assets/button/buttom_level.png", 5, 550, 1000, 80)
 
@@ -268,94 +334,127 @@ food_level = Level(FOOD_BANNER, 100, 230, FOOD)
 animal_level = Level(ANIMAL_BANNER, 270, 230, ANIMAL)
 place_level = Level(PLACE_BANNER, 440, 230, PLACE)
 
+# Main menu world
+Main_menu_world = World("assets/button/main_menu.png")
+
 
 # Game loop
 run = True
 while run:
 
-    if game_state == "Main_Menu":
-        # Background image
-        background = pygame.image.load("assets/button/main_menu.png")
-        background = pygame.transform.scale(
-            background, (screen_width, screen_hight))
-        SCREEN.blit(background, (0, 0))  # Draw background
-
-        if Menu_play_btn.draw(SCREEN):
-            game_state = "Level_Menu"
-        if Menu_exit_btn.draw(SCREEN):
-            run = False
-
-    elif game_state == "Level_Menu":
-        # Background image
-        background = pygame.image.load("assets/button/level_menu.png")
-        background = pygame.transform.scale(
-            background, (screen_width, screen_hight))
-        SCREEN.blit(background, (0, 0))  # Draw background
-
-        level_word.draw(SCREEN)
-
-        food_level.draw(SCREEN)
-        animal_level.draw(SCREEN)
-        place_level.draw(SCREEN)
-
-        if Level_animal_btn.draw(SCREEN):
-            game_category = "Animal"
-            CATEGORY = load_category(game_category)
-            game_level = 1
-
-            gameplay = Game_play(CATEGORY, game_level)
-            if gameplay.Rand_Level_Words(player_ans):  # pick a word
-                gameplay.Shuffled()                    # shuffle it
-                gameplay.Draw_ans()                    # build letter boxes
-
-            game_state = "Gameplay"
-
-        if Level_food_btn.draw(SCREEN):
-            game_category = "Food"
-            CATEGORY = load_category(game_category)
-            game_level = 1
-
-            gameplay = Game_play(CATEGORY, game_level)
-            if gameplay.Rand_Level_Words(player_ans):  # pick a word
-                gameplay.Shuffled()                    # shuffle it
-                gameplay.Draw_ans()
-
-            game_state = "Gameplay"
-
-        if Level_place_btn.draw(SCREEN):
-            game_category = "Place"
-            CATEGORY = load_category(game_category)
-            game_level = 1
-
-            gameplay = Game_play(CATEGORY, game_level)
-            if gameplay.Rand_Level_Words(player_ans):  # pick a word
-                gameplay.Shuffled()                    # shuffle it
-                gameplay.Draw_ans()
-
-            game_state = "Gameplay"
-
-    elif game_state == "Gameplay":
-        world.draw(SCREEN)
-        gameplay.update(SCREEN)
-
-        if Game_enter_btn.draw(SCREEN):
-            pass
-
-        if Game_delete_btn.draw(SCREEN):
-            pass
-
-        if Game_shuffle_btn.draw(SCREEN):
-            if gameplay.Rand_Level_Words(player_ans):  # pick a word
-                gameplay.Shuffled()                    # shuffle it
-                gameplay.Draw_ans()
-
-        if Game_back_btn.draw(SCREEN):
-            game_state = "Level_Menu"
-
     # Game Condition
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
+        if game_state == "Main_Menu":
+            # draw world
+            Main_menu_world.draw(SCREEN)
+
+            # draw btn
+            Menu_play_btn.draw(SCREEN)
+            Menu_exit_btn.draw(SCREEN)
+
+            # event handler
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = event.pos
+                if Menu_play_btn.event_handler() or Menu_play_btn.rect.collidepoint(pos):
+                    game_state = "Level_Menu"
+                if Menu_exit_btn.event_handler() or Menu_exit_btn.rect.collidepoint(pos):
+                    run = False
+
+        elif game_state == "Level_Menu":
+            # Level World design
+            level_word.draw(SCREEN)
+
+            # Level Category
+            food_level.draw(SCREEN)
+            animal_level.draw(SCREEN)
+            place_level.draw(SCREEN)
+
+            # Level btn
+            Level_back_btn.draw(SCREEN)
+            Level_animal_btn.draw(SCREEN)
+            Level_food_btn.draw(SCREEN)
+            Level_place_btn.draw(SCREEN)
+
+            # event handler
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = event.pos
+
+                if Level_back_btn.event_handler() or Level_back_btn.rect.collidepoint(pos):
+                    game_state = "Main_Menu"
+
+                clicked_food_level = food_level.update(event)
+                clicked_animal_level = animal_level.update(event)
+                clicked_place_level = place_level.update(event)
+
+                if clicked_food_level:
+                    game_level = clicked_food_level
+                    game_category = "Food"
+                    CATEGORY = load_category(game_category)
+                    gameplay = Game_play(CATEGORY, game_level)
+                    if gameplay.Rand_Level_Words(player_ans):
+                        gameplay.Shuffled()
+                        gameplay.Update_ans()
+                    game_state = "Gameplay"
+
+                elif clicked_animal_level:
+                    game_level = clicked_animal_level
+                    game_category = "Animal"
+                    CATEGORY = load_category(game_category)
+                    gameplay = Game_play(CATEGORY, game_level)
+                    if gameplay.Rand_Level_Words(player_ans):
+                        gameplay.Shuffled()
+                        gameplay.Update_ans()
+                    game_state = "Gameplay"
+
+                elif clicked_place_level:
+                    game_level = clicked_place_level
+                    game_category = "Place"
+                    CATEGORY = load_category(game_category)
+                    gameplay = Game_play(CATEGORY, game_level)
+                    if gameplay.Rand_Level_Words(player_ans):
+                        gameplay.Shuffled()
+                        gameplay.Update_ans()
+                    game_state = "Gameplay"
+
+        elif game_state == "Gameplay":
+            # Draw game design
+            Game_play_world.draw(SCREEN)
+            gameplay.Draw(SCREEN)
+            gameplay.Update_2(event)
+
+            # draw btn
+            Game_enter_btn.draw(SCREEN)
+            Game_delete_btn.draw(SCREEN)
+            Game_shuffle_btn.draw(SCREEN)
+            Game_back_btn.draw(SCREEN)
+
+            # Event handler
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = event.pos
+
+                if Game_enter_btn.event_handler() or Game_enter_btn.rect.collidepoint(pos):
+                    if "".join(gameplay.guest) == gameplay.Ans_word:
+                        player_ans.append(gameplay.Ans_word)
+                        if gameplay.Rand_Level_Words(player_ans):  # pick a word
+                            gameplay.Shuffled()
+                            gameplay.Update_ans()
+                        gameplay.reset_all_letters()
+                    else:
+                        gameplay.reset_all_letters()
+
+                if Game_delete_btn.event_handler() or Game_delete_btn.rect.collidepoint(pos):
+                    gameplay.delete_last_letter()
+
+                if Game_shuffle_btn.event_handler() or Game_shuffle_btn.rect.collidepoint(pos):
+                    if gameplay.Rand_Level_Words(player_ans):  # pick a word
+                        gameplay.Shuffled()
+                        gameplay.Update_ans()
+
+                if Game_back_btn.event_handler() or Game_back_btn.rect.collidepoint(pos):
+                    game_state = "Level_Menu"
 
     pygame.display.update()
 
