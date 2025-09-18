@@ -9,6 +9,7 @@ SCREEN = pygame.display.set_mode((screen_width, screen_hight))
 pygame.display.set_caption("Text Twist")
 
 # Fonts
+ULTRA_BIG_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 90)
 BIG_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 70)
 FONT = pygame.font.Font("assets/font/Hevilla.ttf", 22)
 
@@ -123,11 +124,17 @@ class World:
     def __init__(self, img):
         # Keep a list of all "design"
         self.designs = []
+        self.text_lis = []
         background = pygame.image.load(img)
         self.background_img = pygame.transform.scale(background, (1000, 600))
 
-    def text():
-        pass
+    def text(self, name="", color=WHITE, x_cord=0, y_cord=0, font=BIG_FONT):
+        txt = font.render(name, True, color)
+        self.text_lis.append({
+            "text": txt,
+            "x_cord": x_cord,
+            "y_cord": y_cord
+        })
 
     def add_design(self, image, x, y, width, height):
         image = pygame.image.load(image)
@@ -138,6 +145,10 @@ class World:
     def draw(self, SCREEN):
         SCREEN.blit(self.background_img, (0, 0))  # Draw background
 
+        # Draw all texts
+        for item in self.text_lis:
+            SCREEN.blit(item["text"], (item["x_cord"], item["y_cord"]))
+        # Draw all designs
         for img, rect in self.designs:
             SCREEN.blit(img, rect)
 
@@ -336,6 +347,8 @@ place_level = Level(PLACE_BANNER, 440, 230, PLACE)
 
 # Main menu world
 Main_menu_world = World("assets/button/main_menu.png")
+Main_menu_world.text("TEXT TWIST", color=BLACK, x_cord=285,
+                     y_cord=40, font=ULTRA_BIG_FONT)
 
 
 # Game loop
