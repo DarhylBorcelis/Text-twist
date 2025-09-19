@@ -9,10 +9,11 @@ SCREEN = pygame.display.set_mode((screen_width, screen_hight))
 pygame.display.set_caption("Text Twist")
 
 # Fonts
-ULTRA_BIG_FONT = pygame.font.Font("assets/font/Seagram_tfb.ttf", 90)
+ULTRA_BIG_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 90)
 BIG_FONT = pygame.font.Font("assets/font/Seagram_tfb.ttf", 70)
 FONT = pygame.font.Font("assets/font/Seagram_tfb.ttf", 22)
 
+HINT_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 28)
 GAME_BTN_FONT = pygame.font.Font("assets/font/Seagram_tfb.ttf", 22)
 MAIN_MENU_BTN_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 22)
 TITLE_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 90)
@@ -31,41 +32,213 @@ player_ans = []
 CATEGORY = {}
 
 
-def load_category(game_category):  # Dictionary
+def load_category(game_category):
     if game_category == "Animal":
         return {
-            1: ["CAT", "DOG", "COW", "PIG", "BAT", "RAT", "FOX", "HEN", "ANT", "OWL"],
-            2: ["LION", "BEAR", "WOLF", "FROG", "DEER", "DUCK", "GOAT", "CRAB", "SWAN", "TOAD"],
-            3: ["HORSE", "SHEEP", "MOUSE", "TIGER", "ZEBRA", "PANDA", "SNAKE", "LLAMA", "EAGLE", "SHARK"],
-            4: ["MONKEY", "DONKEY", "RABBIT", "SPIDER", "TURTLE", "PARROT", "SALMON", "JAGUAR", "BLOBFISH", "GIRAFFE"],
-            5: ["ECHIDNA", "BUFFALO", "LEOPARD", "MARKHOR", "GORILLA", "PELICAN", "OSTRICH", "COYOTE", "PIGEON", "axolotl"]
+            1: [("CAT", "A pet that says meow"),
+                ("DOG", "A pet that barks"),
+                ("COW", "Gives us milk"),
+                ("PIG", "Likes mud"),
+                ("BAT", "A flying mammal"),
+                ("RAT", "A rodent"),
+                ("FOX", "Clever wild animal"),
+                ("HEN", "Lays eggs"),
+                ("ANT", "Tiny insect"),
+                ("OWL", "Sees at night")],
+            2: [("LION", "King of the jungle"),
+                ("BEAR", "Big furry animal"),
+                ("WOLF", "Howls at the moon"),
+                ("FROG", "Jumps, says ribbit"),
+                ("DEER", "Has antlers"),
+                ("DUCK", "Says quack"),
+                ("GOAT", "Likes grass"),
+                ("CRAB", "Has claws"),
+                ("SWAN", "Graceful white bird"),
+                ("TOAD", "Like a frog")],
+            3: [("HORSE", "You can ride it"),
+                ("SHEEP", "Gives us wool"),
+                ("MOUSE", "Small rodent"),
+                ("TIGER", "Striped big cat"),
+                ("ZEBRA", "Striped horse-like"),
+                ("PANDA", "Eats bamboo"),
+                ("SNAKE", "Slithers on ground"),
+                ("LLAMA", "South American animal"),
+                ("EAGLE", "Large bird of prey"),
+                ("SHARK", "Big fish with sharp teeth")],
+            4: [("MONKEY", "Loves bananas"),
+                ("DONKEY", "Carries loads"),
+                ("RABBIT", "Has long ears"),
+                ("SPIDER", "Has eight legs"),
+                ("TURTLE", "Has a shell"),
+                ("PARROT", "Talks like humans"),
+                ("SALMON", "Fish that swims upstream"),
+                ("JAGUAR", "Spotted big cat"),
+                ("BLOBFISH", "Ugly deep-sea fish"),
+                ("GIRAFFE", "Has a long neck")],
+            5: [("ECHIDNA", "Spiny anteater"),
+                ("BUFFALO", "Large wild ox"),
+                ("LEOPARD", "Spotted big cat"),
+                ("MARKHOR", "Wild goat with spiral horns"),
+                ("GORILLA", "Largest primate"),
+                ("PELICAN", "Bird with large beak pouch"),
+                ("OSTRICH", "Big bird that can’t fly"),
+                ("COYOTE", "Wild dog of North America"),
+                ("PIGEON", "Common city bird"),
+                ("AXOLOTL", "Smiling salamander")]
         }
+
     elif game_category == "Food":
         return {
-            1: ["RICE", "BREAD", "SOUP", "CORN", "CAKE", "FISH", "MEAT", "EGGS", "MILK", "BEAN"],
-            2: ["APPLE", "MANGO", "PEACH", "GRAPE", "LEMON", "ONION", "PIZZA", "PASTA", "BERRY", "CHILI"],
-            3: ["BANANA", "TOMATO", "ORANGE", "CARROT", "PEANUT", "BURGER", "COOKIE", "HONEY", "JUICE", "SALAD"],
-            4: ["CHERRY", "PUMPKIN", "GARLIC", "COFFEE", "DONUTS", "NOODLE", "BUTTER", "SPINACH", "CHEESE", "SUGAR"],
-            5: ["POTATOE", "CHICKEN", "CHOCOLATE", "CABBAGE", "ICECREAM", "SANDWICH", "PANCAKE", "CEREALS", "YOGURT", "SEAFOOD"]
+            1: [("RICE", "Staple food in Asia"),
+                ("BREAD", "Made from flour"),
+                ("SOUP", "Hot liquid meal"),
+                ("CORN", "Yellow kernels"),
+                ("CAKE", "Sweet baked dessert"),
+                ("FISH", "Lives in water, eaten as food"),
+                ("MEAT", "From animals"),
+                ("EGGS", "Laid by hens"),
+                ("MILK", "White drink from cows"),
+                ("BEAN", "Small protein seed")],
+            2: [("APPLE", "Keeps the doctor away"),
+                ("MANGO", "Tropical sweet fruit"),
+                ("PEACH", "Fuzzy fruit"),
+                ("GRAPE", "Used for wine"),
+                ("LEMON", "Sour yellow fruit"),
+                ("ONION", "Makes you cry"),
+                ("PIZZA", "Italian flatbread"),
+                ("PASTA", "Italian noodles"),
+                ("BERRY", "Small juicy fruit"),
+                ("CHILI", "Very spicy")],
+            3: [("BANANA", "Yellow curved fruit"),
+                ("TOMATO", "Red fruit used in salad"),
+                ("ORANGE", "Citrus fruit"),
+                ("CARROT", "Orange vegetable"),
+                ("PEANUT", "Nut in a shell"),
+                ("BURGER", "Bread with meat patty"),
+                ("COOKIE", "Sweet baked snack"),
+                ("HONEY", "Sweet food from bees"),
+                ("JUICE", "Drink from fruits"),
+                ("SALAD", "Mix of vegetables")],
+            4: [("CHERRY", "Small red fruit"),
+                ("PUMPKIN", "Big orange vegetable"),
+                ("GARLIC", "Strong-smelling bulb"),
+                ("COFFEE", "Bitter morning drink"),
+                ("DONUTS", "Sweet fried bread"),
+                ("NOODLE", "Long thin pasta"),
+                ("BUTTER", "Made from milk"),
+                ("SPINACH", "Leafy green vegetable"),
+                ("CHEESE", "Made from milk"),
+                ("SUGAR", "Sweet crystals")],
+            5: [("POTATOE", "Used for fries"),
+                ("CHICKEN", "Common white meat"),
+                ("CHOCOLATE", "Sweet made from cocoa"),
+                ("CABBAGE", "Leafy vegetable"),
+                ("ICECREAM", "Frozen dessert"),
+                ("SANDWICH", "Two breads with filling"),
+                ("PANCAKE", "Flat breakfast food"),
+                ("CEREALS", "Breakfast grain"),
+                ("YOGURT", "Fermented milk"),
+                ("SEAFOOD", "Food from the sea")]
         }
+
     elif game_category == "Place":
         return {
-            1: ["PARK", "MALL", "HOME", "ROOM", "FARM", "CITY", "BANK", "SHOP", "POOL", "LORESEXECUTIVE"],
-            2: ["RIVER", "FIELD", "BEACH", "HOTEL", "SCHOOL", "MARKET", "CHURCH", "BRIDGE", "MUSEUM", "STREET"],
-            3: ["CASTLE", "FOREST", "OFFICE", "TEMPLE", "ISLAND", "STADIUM", "PRISON", "TUNNEL", "TOWER", "PALACE"],
-            4: ["VILLAGE", "HOSPITAL", "AIRPORT", "STATION", "MARKETS", "THEATER", "FACTORY", "HARBOR", "CHURCHES", "GARDENS"],
-            5: ["MOUNTAIN", "LIBRARY", "COTTAGE", "UNIVERSITY", "RESTAURANT", "APARTMENT", "PLAYGROUND", "CEMETERY", "WAREHOUSE", "SUBWAY"]
+            1: [("PARK", "Place to play outside"),
+                ("MALL", "Shopping center"),
+                ("HOME", "Where you live"),
+                ("ROOM", "Part of a house"),
+                ("FARM", "Where crops grow"),
+                ("CITY", "Big town"),
+                ("BANK", "Keeps money safe"),
+                ("SHOP", "Small store"),
+                ("POOL", "Place to swim"),
+                ("LOBBY", "Entrance hall")],
+            2: [("RIVER", "Flows with water"),
+                ("FIELD", "Open land"),
+                ("BEACH", "Sandy shore"),
+                ("HOTEL", "Stay when traveling"),
+                ("SCHOOL", "Place to study"),
+                ("MARKET", "Place to buy things"),
+                ("CHURCH", "Place of worship"),
+                ("BRIDGE", "Connects two sides"),
+                ("MUSEUM", "Keeps history"),
+                ("STREET", "Road in a city")],
+            3: [("CASTLE", "Home of kings"),
+                ("FOREST", "Many trees"),
+                ("OFFICE", "Place to work"),
+                ("TEMPLE", "Sacred building"),
+                ("ISLAND", "Land in water"),
+                ("STADIUM", "Sports arena"),
+                ("PRISON", "Holds criminals"),
+                ("TUNNEL", "Underground passage"),
+                ("TOWER", "Tall building"),
+                ("PALACE", "Home of royalty")],
+            4: [("VILLAGE", "Small community"),
+                ("HOSPITAL", "Doctors work here"),
+                ("AIRPORT", "Planes take off"),
+                ("STATION", "Trains stop here"),
+                ("MARKETS", "Places to buy goods"),
+                ("THEATER", "Watch plays or movies"),
+                ("FACTORY", "Makes products"),
+                ("HARBOR", "Where ships dock"),
+                ("CHURCHES", "More than one church"),
+                ("GARDENS", "Where plants grow")],
+            5: [("MOUNTAIN", "Tall landform"),
+                ("LIBRARY", "Keeps books"),
+                ("COTTAGE", "Small house"),
+                ("UNIVERSITY", "Place of higher study"),
+                ("RESTAURANT", "Place to eat"),
+                ("APARTMENT", "Many homes in one building"),
+                ("PLAYGROUND", "Children play here"),
+                ("CEMETERY", "Where people are buried"),
+                ("WAREHOUSE", "Stores goods"),
+                ("SUBWAY", "Underground train")]
         }
 
 
-def Background_img(game_category):
+def Background_img(game_category, game_level):
     if game_category == "Animal":
-        BACKGROUND_IMAGE = "assets/button/game_play.png"
+        Game_play_world.add_design(
+            "assets/button/tablet.png", 230, 50, 535, 320)
+        Game_play_world.add_design(
+            "assets/button/food_banner.png", 50, 30, 130, 210)  # Banner
+        Game_play_world.add_design(
+            "assets/button/ans.png", 250, 400, 500, 50)
+
+        Game_play_world.text(game_category, color=WHITE,
+                             x_cord=83, y_cord=75, font=FONT)
+        Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
+                             y_cord=100, font=BIG_FONT)
+
+        Game_play_world.set_background("assets/button/jungle.png")
+
     elif game_category == "Food":
-        BACKGROUND_IMAGE = "assets/button/Food_background.png"
+        Game_play_world.add_design(
+            "assets/button/Cutting_board.png", 241, 50, 524, 320)   # Black Board
+        Game_play_world.add_design(
+            "assets/button/food_banner.png", 50, 30, 130, 210)  # Banner
+        Game_play_world.add_design("assets/button/ans.png", 250,
+                                   400, 500, 50)  # Ans Placeholder
+        Game_play_world.text(game_category, color=WHITE, x_cord=88,
+                             y_cord=75, font=FONT)
+        Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
+                             y_cord=100, font=BIG_FONT)
+        Game_play_world.set_background("assets/button/Food_background.png")
+
     elif game_category == "Place":
-        BACKGROUND_IMAGE = "assets/button/game_play.png"
-    return BACKGROUND_IMAGE
+        Game_play_world.add_design(
+            "assets/button/bord.png", 150, -190, 700, 800)   # Black Board
+        Game_play_world.add_design(
+            "assets/button/place_banner.png", 50, 30, 130, 210)  # Banner
+        Game_play_world.add_design("assets/button/ans.png", 250,
+                                   400, 500, 50)  # Ans Placeholder
+
+        Game_play_world.text(game_category, color=WHITE, x_cord=88,
+                             y_cord=75, font=FONT)
+        Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
+                             y_cord=100, font=BIG_FONT)
+
+        Game_play_world.set_background("assets/button/game_play.png")
 
 
 FOOD = load_category("Food")
@@ -73,15 +246,13 @@ ANIMAL = load_category("Animal")
 PLACE = load_category("Place")
 
 # Image
-BACKGROUND_IMAGE = Background_img(game_category)
+# Level image
 FOOD_BANNER = "assets/button/food_banner.png"
 PLACE_BANNER = "assets/button/place_banner.png"
 ANIMAL_BANNER = "assets/button/animal_banner.png"
+# Menu image
 MAIN_MENU_BTN = "assets/button/Start_btn.png"
 PLAY_IMAGE = "assets/button/ans.png"
-BANER_IMAGE = "assets/button/banner.png"
-BOARD_IMAGE = "assets/button/bord.png"
-PLACEHOLDER_IMAGE = "assets/button/ans.png"
 BUTTON_IMAGE = "assets/button/button.png"
 
 
@@ -135,13 +306,18 @@ class Button:
 
 
 class World:
-    def __init__(self, img):
-        # Keep a list of all "design"
-        self.img = img
+    def __init__(self, img=None):
+        # Keep a list of all "design" and texts
         self.designs = []
         self.text_lis = []
-        background = pygame.image.load(self.img)
-        self.background_img = pygame.transform.scale(background, (1000, 600))
+        self.background_img = None   # Default = no background
+
+        if img:  # Only load if an image was given
+            self.set_background(img)
+
+    def clear(self):
+        self.designs = []
+        self.text_lis = []
 
     def text(self, name="", color=WHITE, x_cord=0, y_cord=0, font=BIG_FONT):
         txt = font.render(name, True, color)
@@ -151,6 +327,10 @@ class World:
             "y_cord": y_cord
         })
 
+    def set_background(self, img):
+        background = pygame.image.load(img)
+        self.background_img = pygame.transform.scale(background, (1000, 600))
+
     def add_design(self, image, x, y, width, height):
         image = pygame.image.load(image)
         image = pygame.transform.scale(image, (width, height))
@@ -158,18 +338,23 @@ class World:
         self.designs.append((image, rect))
 
     def draw(self, SCREEN):
-        SCREEN.blit(self.background_img, (0, 0))  # Draw background
+        # Draw background only if available
+        if self.background_img:
+            SCREEN.blit(self.background_img, (0, 0))
 
-        # Draw all texts
-        for item in self.text_lis:
-            SCREEN.blit(item["text"], (item["x_cord"], item["y_cord"]))
         # Draw all designs
         for img, rect in self.designs:
             SCREEN.blit(img, rect)
 
+        # Draw all texts
+        for item in self.text_lis:
+            SCREEN.blit(item["text"], (item["x_cord"], item["y_cord"]))
+
 
 class Game_play:
     def __init__(self, category, game_level):
+        self.letters = []
+        self.used_stack = []
         self.letters = []
         self.used_stack = []
         self.category = category
@@ -177,6 +362,66 @@ class Game_play:
         self.guest = []
         self.Ans_word = ""
         self.choices = ""
+        self.hint = ""
+        self.hint_active = False
+
+    def clear(self, category, game_level):
+        self.letters = []
+        self.used_stack = []
+        self.letters = []
+        self.used_stack = []
+        self.category = category
+        self.level_words = category[game_level]
+        self.guest = []
+        self.Ans_word = ""
+        self.choices = ""
+        self.hint = ""
+        self.hint_active = False
+
+    def draw_answers(self, SCREEN, player_ans):
+        font = pygame.font.Font("assets/font/Hevilla.ttf", 25)
+        x_start = 260
+        y_start = 120
+        line_height = 50
+
+        if not player_ans:  # nothing to draw
+            return
+
+        # Measure longest word width
+        longest_word = max(player_ans, key=len)
+        text_width, _ = font.size(longest_word)
+
+        if text_width > 110:
+            cols = 3
+            col_width = 160
+        elif text_width > 50:
+            cols = 4
+            col_width = 120
+        else:
+            cols = 5
+            col_width = 100
+
+        for i, word in enumerate(player_ans):
+            row = i // cols
+            col = i % cols
+
+            x = x_start + col * col_width
+            y = y_start + row * line_height
+
+            txt_surface = font.render(word, True, WHITE)
+            SCREEN.blit(txt_surface, (x, y))
+
+    def Update_keyboard(self, event):
+        if event.type == pygame.KEYDOWN:
+            key_name = pygame.key.name(
+                event.key).upper()  # convert to uppercase
+            # Only accept if the key is one of the letters in choices
+            for i, letter in enumerate(self.letters):
+                if letter["char"] == key_name and letter["active"]:
+                    self.guest.append(letter["char"])
+                    letter["active"] = False
+                    self.used_stack.append(i)
+                    break
 
     def Update_2(self, event):
         # Mouse input
@@ -190,6 +435,7 @@ class Game_play:
                     break
 
     def Draw(self, SCREEN):
+        font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
         for letter in self.letters:
             SCREEN.blit(letter["img"], letter["rect"])
             if letter["active"]:
@@ -197,16 +443,28 @@ class Game_play:
 
         guess_text = "".join(self.guest)
         x_cord = (1000 - (len(self.choices) * 30)) // 2
-        txt_surf = FONT.render(guess_text, True, WHITE)
+        txt_surf = font.render(guess_text, True, WHITE)
         SCREEN.blit(txt_surf, (x_cord, 413))
 
+    def draw_hint(self, SCREEN):
+        if self.hint_active:
+            font = pygame.font.Font("assets/font/Hevilla.ttf", 28)
+            txt = font.render("Hint: "+self.hint, True, WHITE)
+            SCREEN.blit(txt, (280, 60))
+
     def Rand_Level_Words(self, player_ans):
-        available_words = [w for w in self.level_words if w not in player_ans]
+        available_words = [
+            w for w, h in self.level_words if w not in player_ans]
         if not available_words:
-            self.Ans_word = ""  # no words left
+            self.Ans_word = ""
+            self.hint = ""
             return False
         else:
-            self.Ans_word = random.choice(available_words)
+            word, hint = random.choice(self.level_words)
+            while word in player_ans:
+                word, hint = random.choice(self.level_words)
+            self.Ans_word = word
+            self.hint = hint
             return True
 
     def Shuffled(self):
@@ -220,6 +478,7 @@ class Game_play:
         self.choices = shuffled
 
     def Update_ans(self):
+        font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
         # Clear previous letters and used stack
         self.letters = []
         self.used_stack = []
@@ -236,7 +495,7 @@ class Game_play:
             rect.x = x_cord + i * 90
             rect.y = y_cord
 
-            text_surface = FONT.render(char, True, WHITE)
+            text_surface = font.render(char, True, WHITE)
             text_rect = text_surface.get_rect(center=rect.center)
 
             # store and name
@@ -329,9 +588,13 @@ Game_enter_btn = Button(800, 95, BUTTON_IMAGE, (150, 50),
 Game_delete_btn = Button(800, 145, BUTTON_IMAGE, (150, 50),
                          "Delete", key=pygame.K_BACKSPACE, font=GAME_BTN_FONT)
 Game_shuffle_btn = Button(800, 195, BUTTON_IMAGE, (150, 50),
-                          "Shuffle", key=pygame.K_s, font=GAME_BTN_FONT)
+                          "Shuffle", key=pygame.K_SPACE, font=GAME_BTN_FONT)
+Game_hint_btn = Button(800, 245, BUTTON_IMAGE, (150, 50),
+                       "Hint", key=pygame.K_1, font=GAME_BTN_FONT)
+
 Game_back_btn = Button(850, 10, BUTTON_IMAGE, (100, 50),
                        "Back", key=pygame.K_ESCAPE, font=GAME_BTN_FONT)
+
 
 # level buttons
 Level_back_btn = Button(690, -10, BUTTON_IMAGE, (100, 50),
@@ -343,14 +606,11 @@ Level_place_btn = Button(430, 400, PLAY_IMAGE,
                          (120, 40), "place", key=pygame.K_p)
 
 # game play World
-Game_play_world = World(BACKGROUND_IMAGE)
-Game_play_world.add_design(BOARD_IMAGE, 150, -190, 700, 800)   # Black Board
-Game_play_world.add_design(BANER_IMAGE, 50, 30, 130, 210)  # Banner
-Game_play_world.add_design(PLACEHOLDER_IMAGE, 250,
-                           400, 500, 50)  # Ans Placeholder
+Game_play_world = World()
 
 # Level world
-level_word = World("assets/button/level_menu.png")
+level_word = World()
+level_word.set_background("assets/button/level_menu.png")
 level_word.add_design("assets/button/top_level.png", 5, -5, 1000, 80)
 level_word.add_design("assets/button/buttom_level.png", 5, 550, 1000, 80)
 
@@ -359,9 +619,10 @@ animal_level = Level(ANIMAL_BANNER, 270, 230, ANIMAL)
 place_level = Level(PLACE_BANNER, 440, 230, PLACE)
 
 # Main menu world
-Main_menu_world = World("assets/button/main_menu.png")
-Main_menu_world.text("TEXT TWIST", color=BLACK, x_cord=285,
-                     y_cord=40, font=ULTRA_BIG_FONT)
+Main_menu_world = World()
+Main_menu_world.set_background("assets/button/main_menu.png")
+Main_menu_world.text("TEXT TWIST", color=BLACK, x_cord=280,
+                     y_cord=70, font=ULTRA_BIG_FONT)
 
 
 # Game loop
@@ -396,6 +657,7 @@ while run:
                     run = False
 
         elif game_state == "Level_Menu":
+
             # Level World design
             level_word.draw(SCREEN)
 
@@ -429,6 +691,9 @@ while run:
                     game_category = "Food"
                     CATEGORY = load_category(game_category)
                     gameplay = Game_play(CATEGORY, game_level)
+
+                    Background_img(game_category, game_level)
+
                     if gameplay.Rand_Level_Words(player_ans):
                         gameplay.Shuffled()
                         gameplay.Update_ans()
@@ -439,6 +704,9 @@ while run:
                     game_category = "Animal"
                     CATEGORY = load_category(game_category)
                     gameplay = Game_play(CATEGORY, game_level)
+
+                    Background_img(game_category, game_level)
+
                     if gameplay.Rand_Level_Words(player_ans):
                         gameplay.Shuffled()
                         gameplay.Update_ans()
@@ -449,25 +717,50 @@ while run:
                     game_category = "Place"
                     CATEGORY = load_category(game_category)
                     gameplay = Game_play(CATEGORY, game_level)
+
+                    Background_img(game_category, game_level)
+
                     if gameplay.Rand_Level_Words(player_ans):
                         gameplay.Shuffled()
                         gameplay.Update_ans()
                     game_state = "Gameplay"
 
         elif game_state == "Gameplay":
-            Game_play_world.img = Background_img(game_category)
+
             # Draw game design
             Game_play_world.draw(SCREEN)
             gameplay.Draw(SCREEN)
-            gameplay.Update_2(event)
+            gameplay.draw_hint(SCREEN)
+
+            # Handle inputs
+            gameplay.Update_2(event)          # mouse click
+            gameplay.Update_keyboard(event)   # keyboard press
+
+            # Draw solved answers inside the board
+            gameplay.draw_answers(SCREEN, player_ans)
 
             # draw btn
             Game_enter_btn.draw(SCREEN)
             Game_delete_btn.draw(SCREEN)
             Game_shuffle_btn.draw(SCREEN)
+            Game_hint_btn.draw(SCREEN)
+
+            # draw hint
+            words_left = len(gameplay.level_words) - len(player_ans)
+            words_surface = HINT_FONT.render(
+                f"{words_left} Words left", True, WHITE)
+            SCREEN.blit(words_surface, (810, 60))
 
             # Keyboard
             if Game_enter_btn.event_handler():
+                if len(player_ans) == len(gameplay.level_words):
+                    game_level += 1
+                    Game_play_world.clear()
+                    Background_img(game_category, game_level)
+
+                    gameplay.clear(CATEGORY, game_level)
+                    player_ans = []
+
                 if "".join(gameplay.guest) == gameplay.Ans_word:
                     player_ans.append(gameplay.Ans_word)
                     if gameplay.Rand_Level_Words(player_ans):  # pick a word
@@ -485,7 +778,15 @@ while run:
                     gameplay.Shuffled()
                     gameplay.Update_ans()
 
+            if Game_hint_btn.event_handler():
+                if gameplay.hint_active:
+                    gameplay.hint_active = False
+                else:
+                    gameplay.hint_active = True
+
             if Game_back_btn.event_handler():
+                player_ans = []
+                Game_play_world.clear()
                 game_state = "Level_Menu"
 
             # Mouse
@@ -493,6 +794,14 @@ while run:
                 pos = event.pos
 
                 if Game_enter_btn.rect.collidepoint(pos):
+                    if len(player_ans) == len(gameplay.level_words):
+                        game_level += 1
+                        Game_play_world.clear()
+                        Background_img(game_category, game_level)
+
+                        gameplay.clear(CATEGORY, game_level)
+                        player_ans = []
+
                     if "".join(gameplay.guest) == gameplay.Ans_word:
                         player_ans.append(gameplay.Ans_word)
                         if gameplay.Rand_Level_Words(player_ans):  # pick a word
@@ -510,7 +819,15 @@ while run:
                         gameplay.Shuffled()
                         gameplay.Update_ans()
 
+                if Game_hint_btn.rect.collidepoint(pos):
+                    if gameplay.hint_active:
+                        gameplay.hint_active = False
+                    else:
+                        gameplay.hint_active = True
+
                 if Game_back_btn.rect.collidepoint(pos):
+                    player_ans = []
+                    Game_play_world.clear()
                     game_state = "Level_Menu"
 
     pygame.display.update()
