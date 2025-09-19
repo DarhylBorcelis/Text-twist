@@ -9,8 +9,8 @@ SCREEN = pygame.display.set_mode((screen_width, screen_hight))
 pygame.display.set_caption("Text Twist")
 
 # Fonts
-BIG_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 70)
-FONT = pygame.font.Font("assets/font/Hevilla.ttf", 22)
+BIG_FONT = pygame.font.Font("Assets/Font/Hevilla.ttf", 70)
+FONT = pygame.font.Font("Assets/Font/Hevilla.ttf", 22)
 
 # Color
 WHITE = (255, 255, 255)

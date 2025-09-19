@@ -9,9 +9,14 @@ SCREEN = pygame.display.set_mode((screen_width, screen_hight))
 pygame.display.set_caption("Text Twist")
 
 # Fonts
-ULTRA_BIG_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 90)
-BIG_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 70)
-FONT = pygame.font.Font("assets/font/Hevilla.ttf", 22)
+ULTRA_BIG_FONT = pygame.font.Font("assets/font/Seagram_tfb.ttf", 90)
+BIG_FONT = pygame.font.Font("assets/font/Seagram_tfb.ttf", 70)
+FONT = pygame.font.Font("assets/font/Seagram_tfb.ttf", 22)
+
+GAME_BTN_FONT = pygame.font.Font("assets/font/Seagram_tfb.ttf", 22)
+MAIN_MENU_BTN_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 22)
+TITLE_FONT = pygame.font.Font("assets/font/Hevilla.ttf", 90)
+PLACEHOLDER_FONT = pygame.font.Font("assets/font/Augusta.ttf", 22)
 
 # Color
 WHITE = (255, 255, 255)
@@ -32,8 +37,8 @@ def load_category(game_category):  # Dictionary
             1: ["CAT", "DOG", "COW", "PIG", "BAT", "RAT", "FOX", "HEN", "ANT", "OWL"],
             2: ["LION", "BEAR", "WOLF", "FROG", "DEER", "DUCK", "GOAT", "CRAB", "SWAN", "TOAD"],
             3: ["HORSE", "SHEEP", "MOUSE", "TIGER", "ZEBRA", "PANDA", "SNAKE", "LLAMA", "EAGLE", "SHARK"],
-            4: ["MONKEY", "DONKEY", "RABBIT", "SPIDER", "TURTLE", "PARROT", "SALMON", "JAGUAR", "CAMEL", "GIRAFFE"],
-            5: ["DOLPHIN", "BUFFALO", "LEOPARD", "CHICKEN", "GORILLA", "PELICAN", "OSTRICH", "COYOTE", "PIGEON", "DRAGON"]
+            4: ["MONKEY", "DONKEY", "RABBIT", "SPIDER", "TURTLE", "PARROT", "SALMON", "JAGUAR", "BLOBFISH", "GIRAFFE"],
+            5: ["ECHIDNA", "BUFFALO", "LEOPARD", "MARKHOR", "GORILLA", "PELICAN", "OSTRICH", "COYOTE", "PIGEON", "axolotl"]
         }
     elif game_category == "Food":
         return {
@@ -45,7 +50,7 @@ def load_category(game_category):  # Dictionary
         }
     elif game_category == "Place":
         return {
-            1: ["PARK", "MALL", "HOME", "ROOM", "FARM", "CITY", "BANK", "SHOP", "POOL", "PORT"],
+            1: ["PARK", "MALL", "HOME", "ROOM", "FARM", "CITY", "BANK", "SHOP", "POOL", "LORESEXECUTIVE"],
             2: ["RIVER", "FIELD", "BEACH", "HOTEL", "SCHOOL", "MARKET", "CHURCH", "BRIDGE", "MUSEUM", "STREET"],
             3: ["CASTLE", "FOREST", "OFFICE", "TEMPLE", "ISLAND", "STADIUM", "PRISON", "TUNNEL", "TOWER", "PALACE"],
             4: ["VILLAGE", "HOSPITAL", "AIRPORT", "STATION", "MARKETS", "THEATER", "FACTORY", "HARBOR", "CHURCHES", "GARDENS"],
@@ -53,22 +58,31 @@ def load_category(game_category):  # Dictionary
         }
 
 
+def Background_img(game_category):
+    if game_category == "Animal":
+        BACKGROUND_IMAGE = "assets/button/game_play.png"
+    elif game_category == "Food":
+        BACKGROUND_IMAGE = "assets/button/Food_background.png"
+    elif game_category == "Place":
+        BACKGROUND_IMAGE = "assets/button/game_play.png"
+    return BACKGROUND_IMAGE
+
+
 FOOD = load_category("Food")
 ANIMAL = load_category("Animal")
 PLACE = load_category("Place")
 
 # Image
+BACKGROUND_IMAGE = Background_img(game_category)
 FOOD_BANNER = "assets/button/food_banner.png"
 PLACE_BANNER = "assets/button/place_banner.png"
 ANIMAL_BANNER = "assets/button/animal_banner.png"
-
-if game_category == "Animal":
-    BUTTON_IMAGE = "assets/button/button.png"
-    BACKGROUND_IMAGE = "assets/button/game_play.png"
-    PLAY_IMAGE = "assets/button/ans.png"
-    BANER_IMAGE = "assets/button/banner.png"
-    BOARD_IMAGE = "assets/button/bord.png"
-    PLACEHOLDER_IMAGE = "assets/button/ans.png"
+MAIN_MENU_BTN = "assets/button/Start_btn.png"
+PLAY_IMAGE = "assets/button/ans.png"
+BANER_IMAGE = "assets/button/banner.png"
+BOARD_IMAGE = "assets/button/bord.png"
+PLACEHOLDER_IMAGE = "assets/button/ans.png"
+BUTTON_IMAGE = "assets/button/button.png"
 
 
 class Button:
@@ -123,9 +137,10 @@ class Button:
 class World:
     def __init__(self, img):
         # Keep a list of all "design"
+        self.img = img
         self.designs = []
         self.text_lis = []
-        background = pygame.image.load(img)
+        background = pygame.image.load(self.img)
         self.background_img = pygame.transform.scale(background, (1000, 600))
 
     def text(self, name="", color=WHITE, x_cord=0, y_cord=0, font=BIG_FONT):
@@ -303,34 +318,32 @@ class Level:
 
 
 # main menu Buttons
-Menu_play_btn = Button(430, 280, PLAY_IMAGE, (120, 60),
-                       "Play", key=pygame.K_RETURN)
-Menu_exit_btn = Button(430, 350, PLAY_IMAGE, (120, 60),
-                       "Exit", key=pygame.K_ESCAPE)
+Menu_play_btn = Button(410, 280, MAIN_MENU_BTN, (160, 110),
+                       "Play", key=pygame.K_RETURN, font=MAIN_MENU_BTN_FONT)
+Menu_exit_btn = Button(440, 390, PLAY_IMAGE, (100, 40),
+                       "Exit", key=pygame.K_ESCAPE, font=MAIN_MENU_BTN_FONT)
 
 # Game play buttons
 Game_enter_btn = Button(800, 95, BUTTON_IMAGE, (150, 50),
-                        "Enter", key=pygame.K_RETURN)
+                        "Enter", key=pygame.K_RETURN, font=GAME_BTN_FONT)
 Game_delete_btn = Button(800, 145, BUTTON_IMAGE, (150, 50),
-                         "Delete", key=pygame.K_DELETE)
+                         "Delete", key=pygame.K_BACKSPACE, font=GAME_BTN_FONT)
 Game_shuffle_btn = Button(800, 195, BUTTON_IMAGE, (150, 50),
-                          "Shuffle", key=pygame.K_s)
-Game_back_btn = Button(800, -10, BUTTON_IMAGE, (100, 50),
-                       "Back", key=pygame.K_ESCAPE)
+                          "Shuffle", key=pygame.K_s, font=GAME_BTN_FONT)
+Game_back_btn = Button(850, 10, BUTTON_IMAGE, (100, 50),
+                       "Back", key=pygame.K_ESCAPE, font=GAME_BTN_FONT)
 
 # level buttons
 Level_back_btn = Button(690, -10, BUTTON_IMAGE, (100, 50),
                         "Back", key=pygame.K_ESCAPE)
-Level_food_btn = Button(430, 60, PLAY_IMAGE, (120, 40), "Food", key=pygame.K_f)
+Level_food_btn = Button(430, 60, PLAY_IMAGE, (120, 40), "food", key=pygame.K_f)
 Level_animal_btn = Button(430, 230, PLAY_IMAGE,
                           (120, 40), "animal", key=pygame.K_a)
 Level_place_btn = Button(430, 400, PLAY_IMAGE,
-                         (120, 40), "Place", key=pygame.K_p)
+                         (120, 40), "place", key=pygame.K_p)
 
 # game play World
-Game_play_world = World("assets/button/game_play.png")
-Game_play_world.add_design(BACKGROUND_IMAGE, 0,
-                           0, screen_width, screen_hight)  # Background
+Game_play_world = World(BACKGROUND_IMAGE)
 Game_play_world.add_design(BOARD_IMAGE, 150, -190, 700, 800)   # Black Board
 Game_play_world.add_design(BANER_IMAGE, 50, 30, 130, 210)  # Banner
 Game_play_world.add_design(PLACEHOLDER_IMAGE, 250,
@@ -368,6 +381,12 @@ while run:
             Menu_play_btn.draw(SCREEN)
             Menu_exit_btn.draw(SCREEN)
 
+            # keybord
+            if Menu_play_btn.event_handler():
+                game_state = "Level_Menu"
+            if Menu_exit_btn.event_handler():
+                run = False
+
             # event handler
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = event.pos
@@ -386,16 +405,19 @@ while run:
             place_level.draw(SCREEN)
 
             # Level btn
-            Level_back_btn.draw(SCREEN)
             Level_animal_btn.draw(SCREEN)
             Level_food_btn.draw(SCREEN)
             Level_place_btn.draw(SCREEN)
+
+            # Keyboard
+            if Level_back_btn.event_handler():
+                game_state = "Main_Menu"
 
             # event handler
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = event.pos
 
-                if Level_back_btn.event_handler() or Level_back_btn.rect.collidepoint(pos):
+                if Level_back_btn.rect.collidepoint(pos):
                     game_state = "Main_Menu"
 
                 clicked_food_level = food_level.update(event)
@@ -433,6 +455,7 @@ while run:
                     game_state = "Gameplay"
 
         elif game_state == "Gameplay":
+            Game_play_world.img = Background_img(game_category)
             # Draw game design
             Game_play_world.draw(SCREEN)
             gameplay.Draw(SCREEN)
@@ -442,13 +465,34 @@ while run:
             Game_enter_btn.draw(SCREEN)
             Game_delete_btn.draw(SCREEN)
             Game_shuffle_btn.draw(SCREEN)
-            Game_back_btn.draw(SCREEN)
 
-            # Event handler
+            # Keyboard
+            if Game_enter_btn.event_handler():
+                if "".join(gameplay.guest) == gameplay.Ans_word:
+                    player_ans.append(gameplay.Ans_word)
+                    if gameplay.Rand_Level_Words(player_ans):  # pick a word
+                        gameplay.Shuffled()
+                        gameplay.Update_ans()
+                    gameplay.reset_all_letters()
+                else:
+                    gameplay.reset_all_letters()
+
+            if Game_delete_btn.event_handler():
+                gameplay.delete_last_letter()
+
+            if Game_shuffle_btn.event_handler():
+                if gameplay.Rand_Level_Words(player_ans):  # pick a word
+                    gameplay.Shuffled()
+                    gameplay.Update_ans()
+
+            if Game_back_btn.event_handler():
+                game_state = "Level_Menu"
+
+            # Mouse
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = event.pos
 
-                if Game_enter_btn.event_handler() or Game_enter_btn.rect.collidepoint(pos):
+                if Game_enter_btn.rect.collidepoint(pos):
                     if "".join(gameplay.guest) == gameplay.Ans_word:
                         player_ans.append(gameplay.Ans_word)
                         if gameplay.Rand_Level_Words(player_ans):  # pick a word
@@ -458,15 +502,15 @@ while run:
                     else:
                         gameplay.reset_all_letters()
 
-                if Game_delete_btn.event_handler() or Game_delete_btn.rect.collidepoint(pos):
+                if Game_delete_btn.rect.collidepoint(pos):
                     gameplay.delete_last_letter()
 
-                if Game_shuffle_btn.event_handler() or Game_shuffle_btn.rect.collidepoint(pos):
+                if Game_shuffle_btn.rect.collidepoint(pos):
                     if gameplay.Rand_Level_Words(player_ans):  # pick a word
                         gameplay.Shuffled()
                         gameplay.Update_ans()
 
-                if Game_back_btn.event_handler() or Game_back_btn.rect.collidepoint(pos):
+                if Game_back_btn.rect.collidepoint(pos):
                     game_state = "Level_Menu"
 
     pygame.display.update()
