@@ -201,7 +201,7 @@ def Background_img(game_category, game_level):
         Game_play_world.add_design(
             "assets/button/tablet.png", 210, 50, 565, 340)
         Game_play_world.add_design(
-            "assets/button/animal_banner.png", 50, 30, 130, 210)  # Banner
+            "assets/button/place_banner.png", 50, 30, 130, 210)  # Banner
         Game_play_world.add_design(
             "assets/button/Wood.png", 250, 400, 500, 50)
 
@@ -231,7 +231,7 @@ def Background_img(game_category, game_level):
         Game_play_world.add_design(
             "assets/button/bord.png", 150, -190, 700, 800)   # Black Board
         Game_play_world.add_design(
-            "assets/button/place_banner.png", 50, 30, 130, 210)  # Banner
+            "assets/button/animal_banner.png", 50, 30, 130, 210)  # Banner
         Game_play_world.add_design("assets/button/ans.png", 250,
                                    400, 500, 50)  # Ans Placeholder
 
@@ -251,8 +251,8 @@ PLACE = load_category("Place")
 # Image
 # Level image
 FOOD_BANNER = "assets/button/food_banner.png"
-PLACE_BANNER = "assets/button/place_banner.png"
-ANIMAL_BANNER = "assets/button/animal_banner.png"
+PLACE_BANNER = "assets/button/animal_banner.png"
+ANIMAL_BANNER = "assets/button/place_banner.png"
 # Menu image
 MAIN_MENU_BTN = "assets/button/Start_btn.png"
 PLAY_IMAGE = "assets/button/ans.png"
