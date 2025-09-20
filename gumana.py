@@ -199,11 +199,11 @@ def load_category(game_category):
 def Background_img(game_category, game_level):
     if game_category == "Animal":
         Game_play_world.add_design(
-            "assets/button/tablet.png", 230, 50, 535, 320)
+            "assets/button/tablet.png", 210, 50, 565, 340)
         Game_play_world.add_design(
-            "assets/button/food_banner.png", 50, 30, 130, 210)  # Banner
+            "assets/button/animal_banner.png", 50, 30, 130, 210)  # Banner
         Game_play_world.add_design(
-            "assets/button/ans.png", 250, 400, 500, 50)
+            "assets/button/Wood.png", 250, 400, 500, 50)
 
         Game_play_world.text(game_category, color=WHITE,
                              x_cord=83, y_cord=75, font=FONT)
@@ -214,15 +214,17 @@ def Background_img(game_category, game_level):
 
     elif game_category == "Food":
         Game_play_world.add_design(
-            "assets/button/Cutting_board.png", 241, 50, 524, 320)   # Black Board
+            "assets/button/cutting_board.png", 147, 15, 698, 400)   # Black Board
         Game_play_world.add_design(
             "assets/button/food_banner.png", 50, 30, 130, 210)  # Banner
-        Game_play_world.add_design("assets/button/ans.png", 250,
+        Game_play_world.add_design("assets/button/bread.png", 250,
                                    400, 500, 50)  # Ans Placeholder
+
         Game_play_world.text(game_category, color=WHITE, x_cord=88,
                              y_cord=75, font=FONT)
         Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
                              y_cord=100, font=BIG_FONT)
+
         Game_play_world.set_background("assets/button/Food_background.png")
 
     elif game_category == "Place":
@@ -238,7 +240,8 @@ def Background_img(game_category, game_level):
         Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
                              y_cord=100, font=BIG_FONT)
 
-        Game_play_world.set_background("assets/button/game_play.png")
+        # image by Copyright: Mikko Lagerstedt
+        Game_play_world.set_background("assets/button/gameplay2.png")
 
 
 FOOD = load_category("Food")
@@ -257,43 +260,46 @@ BUTTON_IMAGE = "assets/button/button.png"
 
 
 class Button:
-    def __init__(self, x, y, image, scale, text="", font=FONT, text_color=WHITE, key=None):
+    def __init__(self, x, y, image, scale, text="", font=FONT, text_color=WHITE, key=None, cooldown=300):
         self.image = pygame.image.load(image)
         self.image = pygame.transform.scale(self.image, scale)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.click = False
 
-        # Text setup
         self.text = text
         self.font = font
         self.text_color = text_color
-
-        # Keyboard
-        self.key = key
-        self.key_click = False   # initialize here
-
         if self.font and self.text != "":
             self.text_surface = self.font.render(
-                self.text, True, self.text_color
-            )
+                self.text, True, self.text_color)
             self.text_rect = self.text_surface.get_rect(
-                center=self.rect.center
-            )
+                center=self.rect.center)
         else:
             self.text_surface = None
 
+        # keyboard
+        self.key = key
+        self.cooldown = cooldown
+        self.last_press = 0
+        self.held = False
+
     def event_handler(self):
         action = False
-        # Keyboard input
-        keys = pygame.key.get_pressed()
+        current_time = pygame.time.get_ticks()
+
         if self.key:
-            if not keys[self.key] and self.key_click:
-                action = True
-                self.key_click = False
-            elif keys[self.key]:
-                self.key_click = True
+            keys = pygame.key.get_pressed()
+            if keys[self.key]:
+                if not self.held:
+                    action = True
+                    self.last_press = current_time
+                    self.held = True
+                elif current_time - self.last_press >= self.cooldown:
+                    action = True
+                    self.last_press = current_time
+            else:
+                self.held = False
 
         return action
 
@@ -477,15 +483,30 @@ class Game_play:
             shuffled = "".join(letters)
         self.choices = shuffled
 
-    def Update_ans(self):
-        font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
+    def Update_ans(self, category):
         # Clear previous letters and used stack
         self.letters = []
         self.used_stack = []
         self.guest = []
 
-        base_img = pygame.image.load("assets/button/letters.png")
-        base_img = pygame.transform.scale(base_img, (80, 50))
+        if category == "Food":
+            font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
+            img = "assets/button/plate.png"
+            color = BLACK
+            x_size, y_size = 80, 50
+        elif category == "Animal":
+            font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
+            img = "assets/button/leaf.png"
+            color = BLACK
+            x_size, y_size = 100, 70
+        elif category == "Place":
+            font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
+            img = "assets/button/letters.png"
+            color = WHITE
+            x_size, y_size = 80, 50
+
+        base_img = pygame.image.load(img)
+        base_img = pygame.transform.scale(base_img, (x_size, y_size))
 
         x_cord = (1000 - (len(self.choices) * 90)) // 2
         y_cord = 470
@@ -495,7 +516,7 @@ class Game_play:
             rect.x = x_cord + i * 90
             rect.y = y_cord
 
-            text_surface = font.render(char, True, WHITE)
+            text_surface = font.render(char, True, color)
             text_rect = text_surface.get_rect(center=rect.center)
 
             # store and name
@@ -592,6 +613,8 @@ Game_shuffle_btn = Button(800, 195, BUTTON_IMAGE, (150, 50),
 Game_hint_btn = Button(800, 245, BUTTON_IMAGE, (150, 50),
                        "Hint", key=pygame.K_1, font=GAME_BTN_FONT)
 
+Game_next_btn = Button(800, 295, BUTTON_IMAGE, (150, 50),
+                       "Next Level", key=pygame.K_2, font=GAME_BTN_FONT)
 Game_back_btn = Button(850, 10, BUTTON_IMAGE, (100, 50),
                        "Back", key=pygame.K_ESCAPE, font=GAME_BTN_FONT)
 
@@ -696,7 +719,7 @@ while run:
 
                     if gameplay.Rand_Level_Words(player_ans):
                         gameplay.Shuffled()
-                        gameplay.Update_ans()
+                        gameplay.Update_ans(game_category)
                     game_state = "Gameplay"
 
                 elif clicked_animal_level:
@@ -709,7 +732,7 @@ while run:
 
                     if gameplay.Rand_Level_Words(player_ans):
                         gameplay.Shuffled()
-                        gameplay.Update_ans()
+                        gameplay.Update_ans(game_category)
                     game_state = "Gameplay"
 
                 elif clicked_place_level:
@@ -722,7 +745,7 @@ while run:
 
                     if gameplay.Rand_Level_Words(player_ans):
                         gameplay.Shuffled()
-                        gameplay.Update_ans()
+                        gameplay.Update_ans(game_category)
                     game_state = "Gameplay"
 
         elif game_state == "Gameplay":
@@ -751,22 +774,24 @@ while run:
                 f"{words_left} Words left", True, WHITE)
             SCREEN.blit(words_surface, (810, 60))
 
+            if words_left == 0:
+                Game_next_btn.draw(SCREEN)
+
+                if Game_next_btn.event_handler():
+                    player_ans = []
+                    Game_play_world.clear()
+                    game_level += 1
+                    Background_img(game_category, game_level)
+                    gameplay.clear(CATEGORY, game_level)
+
             # Keyboard
             if Game_enter_btn.event_handler():
-                if len(player_ans) == len(gameplay.level_words):
-                    game_level += 1
-                    Game_play_world.clear()
-                    Background_img(game_category, game_level)
-
-                    gameplay.clear(CATEGORY, game_level)
-                    player_ans = []
-
                 if "".join(gameplay.guest) == gameplay.Ans_word:
-                    player_ans.append(gameplay.Ans_word)
+                    if gameplay.Ans_word != "":
+                        player_ans.append(gameplay.Ans_word)
                     if gameplay.Rand_Level_Words(player_ans):  # pick a word
                         gameplay.Shuffled()
-                        gameplay.Update_ans()
-                    gameplay.reset_all_letters()
+                        gameplay.Update_ans(game_category)
                 else:
                     gameplay.reset_all_letters()
 
@@ -776,7 +801,7 @@ while run:
             if Game_shuffle_btn.event_handler():
                 if gameplay.Rand_Level_Words(player_ans):  # pick a word
                     gameplay.Shuffled()
-                    gameplay.Update_ans()
+                    gameplay.Update_ans(game_category)
 
             if Game_hint_btn.event_handler():
                 if gameplay.hint_active:
@@ -793,21 +818,22 @@ while run:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = event.pos
 
-                if Game_enter_btn.rect.collidepoint(pos):
-                    if len(player_ans) == len(gameplay.level_words):
-                        game_level += 1
-                        Game_play_world.clear()
-                        Background_img(game_category, game_level)
-
-                        gameplay.clear(CATEGORY, game_level)
+                if words_left == 0:
+                    Game_next_btn.draw(SCREEN)
+                    if Game_next_btn.rect.collidepoint(pos):
                         player_ans = []
+                        Game_play_world.clear()
+                        game_level += 1
+                        Background_img(game_category, game_level)
+                        gameplay.clear(CATEGORY, game_level)
 
+                if Game_enter_btn.rect.collidepoint(pos):
                     if "".join(gameplay.guest) == gameplay.Ans_word:
-                        player_ans.append(gameplay.Ans_word)
-                        if gameplay.Rand_Level_Words(player_ans):  # pick a word
+                        if gameplay.Ans_word != "":
+                            player_ans.append(gameplay.Ans_word)
+                        if gameplay.Rand_Level_Words(player_ans):
                             gameplay.Shuffled()
-                            gameplay.Update_ans()
-                        gameplay.reset_all_letters()
+                            gameplay.Update_ans(game_category)
                     else:
                         gameplay.reset_all_letters()
 
@@ -817,7 +843,7 @@ while run:
                 if Game_shuffle_btn.rect.collidepoint(pos):
                     if gameplay.Rand_Level_Words(player_ans):  # pick a word
                         gameplay.Shuffled()
-                        gameplay.Update_ans()
+                        gameplay.Update_ans(game_category)
 
                 if Game_hint_btn.rect.collidepoint(pos):
                     if gameplay.hint_active:
