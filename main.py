@@ -23,6 +23,10 @@ PLACEHOLDER_FONT = pygame.font.Font("assets/font/Augusta.ttf", 22)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
+# Sound
+CLICK_SOUND = pygame.mixer.Sound("assets/sound/click.mp3")
+CLICK_SOUND.set_volume(0.5)
+
 
 # Variables
 game_state = "Main_Menu"
@@ -665,9 +669,10 @@ while run:
             # event handler
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = event.pos
-                if Menu_play_btn.event_handler() or Menu_play_btn.rect.collidepoint(pos):
+                if Menu_play_btn.rect.collidepoint(pos):
                     game_state = "Level_Menu"
-                if Menu_exit_btn.event_handler() or Menu_exit_btn.rect.collidepoint(pos):
+                    CLICK_SOUND.play()
+                if Menu_exit_btn.rect.collidepoint(pos):
                     run = False
 
         elif game_state == "Level_Menu":
@@ -701,6 +706,7 @@ while run:
                 clicked_place_level = place_level.update(event)
 
                 if clicked_food_level:
+                    CLICK_SOUND.play()
 
                     game_level = clicked_food_level
                     game_category = "Food"
@@ -725,6 +731,8 @@ while run:
                     game_state = "Gameplay"
 
                 elif clicked_animal_level:
+                    CLICK_SOUND.play()
+
                     game_level = clicked_animal_level
                     game_category = "Animal"
 
@@ -748,6 +756,8 @@ while run:
                     game_state = "Gameplay"
 
                 elif clicked_place_level:
+                    CLICK_SOUND.play()
+
                     game_level = clicked_place_level
                     game_category = "Place"
 
@@ -807,6 +817,7 @@ while run:
 
             # Keyboard
             if Game_enter_btn.event_handler():
+                CLICK_SOUND.play()
                 if "".join(gameplay.guest) == gameplay.Ans_word:
                     if gameplay.Ans_word != "":
                         player_ans.append(gameplay.Ans_word)
@@ -817,20 +828,24 @@ while run:
                     gameplay.reset_all_letters()
 
             if Game_delete_btn.event_handler():
+                CLICK_SOUND.play()
                 gameplay.delete_last_letter()
 
             if Game_shuffle_btn.event_handler():
+                CLICK_SOUND.play()
                 if gameplay.Rand_Level_Words(player_ans):  # pick a word
                     gameplay.Shuffled()
                     gameplay.Update_ans(game_category)
 
             if Game_hint_btn.event_handler():
+                CLICK_SOUND.play()
                 if gameplay.hint_active:
                     gameplay.hint_active = False
                 else:
                     gameplay.hint_active = True
 
             if Game_back_btn.event_handler():
+                CLICK_SOUND.play()
                 player_ans = []
                 Game_play_world.clear()
                 game_state = "Level_Menu"
@@ -849,6 +864,7 @@ while run:
                         gameplay.clear(CATEGORY, game_level)
 
                 if Game_enter_btn.rect.collidepoint(pos):
+                    CLICK_SOUND.play()
                     if "".join(gameplay.guest) == gameplay.Ans_word:
                         if gameplay.Ans_word != "":
                             player_ans.append(gameplay.Ans_word)
@@ -859,20 +875,24 @@ while run:
                         gameplay.reset_all_letters()
 
                 if Game_delete_btn.rect.collidepoint(pos):
+                    CLICK_SOUND.play()
                     gameplay.delete_last_letter()
 
                 if Game_shuffle_btn.rect.collidepoint(pos):
+                    CLICK_SOUND.play()
                     if gameplay.Rand_Level_Words(player_ans):  # pick a word
                         gameplay.Shuffled()
                         gameplay.Update_ans(game_category)
 
                 if Game_hint_btn.rect.collidepoint(pos):
+                    CLICK_SOUND.play()
                     if gameplay.hint_active:
                         gameplay.hint_active = False
                     else:
                         gameplay.hint_active = True
 
                 if Game_back_btn.rect.collidepoint(pos):
+                    CLICK_SOUND.play()
                     player_ans = []
                     Game_play_world.clear()
                     game_state = "Level_Menu"
