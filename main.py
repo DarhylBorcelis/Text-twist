@@ -197,51 +197,50 @@ def load_category(game_category):
 
 
 def Background_img(game_category, game_level):
-    # if game_category == "Animal":
-    #     Game_play_world.add_design(
-    #         "assets/button/tablet.png", 210, 50, 565, 340)
-    #     Game_play_world.add_design(
-    #         "assets/button/place_banner.png", 50, 30, 130, 210)  # Banner
-    #     Game_play_world.add_design(
-    #         "assets/button/Wood.png", 250, 400, 500, 50)
+    if game_category == "Animal":
+        Game_play_world.add_design(
+            "assets/button/bord2.png", 120, 5, 730, 430)   # Black Board
+        Game_play_world.add_design(
+            "assets/button/animal_banner2.png", 50, 30, 130, 210)  # Banner
+        Game_play_world.add_design("assets/button/ans2.png", 250,
+                                   390, 500, 70)  # Ans Placeholder
 
-    #     Game_play_world.text(game_category, color=WHITE,
-    #                          x_cord=83, y_cord=75, font=FONT)
-    #     Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
-    #                          y_cord=100, font=BIG_FONT)
+        Game_play_world.text(game_category, color=WHITE, x_cord=80,
+                             y_cord=80, font=FONT)
+        Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
+                             y_cord=100, font=BIG_FONT)
 
-    #     Game_play_world.set_background("assets/button/jungle.png")
+        Game_play_world.set_background("assets/button/gameplay.png")
 
-    # elif game_category == "Food":
-    #     Game_play_world.add_design(
-    #         "assets/button/cutting_board.png", 147, 15, 698, 400)   # Black Board
-    #     Game_play_world.add_design(
-    #         "assets/button/food_banner.png", 50, 30, 130, 210)  # Banner
-    #     Game_play_world.add_design("assets/button/bread.png", 250,
-    #                                400, 500, 50)  # Ans Placeholder
+    elif game_category == "Food":
+        Game_play_world.add_design(
+            "assets/button/bord1.png", 150, -180, 700, 800)   # Black Board
+        Game_play_world.add_design(
+            "assets/button/animal_banner1.png", 50, 30, 130, 210)  # Banner
+        Game_play_world.add_design("assets/button/ans1.png", 250,
+                                   390, 500, 70)  # Ans Placeholder
 
-    #     Game_play_world.text(game_category, color=WHITE, x_cord=88,
-    #                          y_cord=75, font=FONT)
-    #     Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
-    #                          y_cord=100, font=BIG_FONT)
+        Game_play_world.text(game_category, color=WHITE, x_cord=88,
+                             y_cord=81, font=FONT)
+        Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
+                             y_cord=100, font=BIG_FONT)
 
-    #     Game_play_world.set_background("assets/button/Food_background.png")
+        Game_play_world.set_background("assets/button/gameplay1.png")
 
-    # elif game_category == "Place":
-    Game_play_world.add_design(
-        "assets/button/bord.png", 150, -190, 700, 800)   # Black Board
-    Game_play_world.add_design(
-        "assets/button/animal_banner.png", 50, 30, 130, 210)  # Banner
-    Game_play_world.add_design("assets/button/ans.png", 250,
-                               400, 500, 50)  # Ans Placeholder
+    elif game_category == "Place":
+        Game_play_world.add_design(
+            "assets/button/bord.png", 150, -190, 700, 800)   # Black Board
+        Game_play_world.add_design(
+            "assets/button/animal_banner3.png", 50, 30, 130, 210)  # Banner
+        Game_play_world.add_design("assets/button/ans.png", 250,
+                                   390, 500, 70)  # Ans Placeholder
 
-    Game_play_world.text(game_category, color=WHITE, x_cord=88,
-                         y_cord=75, font=FONT)
-    Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
-                         y_cord=100, font=BIG_FONT)
+        Game_play_world.text(game_category, color=WHITE, x_cord=88,
+                             y_cord=75, font=FONT)
+        Game_play_world.text(str(game_level), color=WHITE, x_cord=95,
+                             y_cord=100, font=BIG_FONT)
 
-    # image by Copyright: Mikko Lagerstedt
-    Game_play_world.set_background("assets/button/gameplay2.png")
+        Game_play_world.set_background("assets/button/gameplay3.png")
 
 
 FOOD = load_category("Food")
@@ -251,8 +250,8 @@ PLACE = load_category("Place")
 # Image
 # Level image
 FOOD_BANNER = "assets/button/food_banner.png"
-PLACE_BANNER = "assets/button/animal_banner.png"
-ANIMAL_BANNER = "assets/button/place_banner.png"
+PLACE_BANNER = "assets/button/Place_banner.png"
+ANIMAL_BANNER = "assets/button/animal_banner.png"
 # Menu image
 MAIN_MENU_BTN = "assets/button/Start_btn.png"
 PLAY_IMAGE = "assets/button/ans.png"
@@ -489,21 +488,21 @@ class Game_play:
         self.used_stack = []
         self.guest = []
 
-        # if category == "Food":
-        #     font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
-        #     img = "assets/button/plate.png"
-        #     color = BLACK
-        #     x_size, y_size = 80, 50
-        # elif category == "Animal":
-        #     font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
-        #     img = "assets/button/leaf.png"
-        #     color = BLACK
-        #     x_size, y_size = 100, 70
-        # elif category == "Place":
-        font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
-        img = "assets/button/letters.png"
-        color = WHITE
-        x_size, y_size = 80, 50
+        if category == "Food":
+            font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
+            img = "assets/button/letters2.png"
+            color = WHITE
+            x_size, y_size = 90, 60
+        elif category == "Animal":
+            font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
+            img = "assets/button/letters1.png"
+            color = WHITE
+            x_size, y_size = 90, 60
+        elif category == "Place":
+            font = pygame.font.Font("assets/font/AUGUSTUS.TTF", 25)
+            img = "assets/button/letters3.png"
+            color = WHITE
+            x_size, y_size = 90, 60
 
         base_img = pygame.image.load(img)
         base_img = pygame.transform.scale(base_img, (x_size, y_size))
@@ -604,14 +603,6 @@ Menu_exit_btn = Button(440, 390, PLAY_IMAGE, (100, 40),
                        "Exit", key=pygame.K_ESCAPE, font=MAIN_MENU_BTN_FONT)
 
 # Game play buttons
-Game_enter_btn = Button(800, 95, BUTTON_IMAGE, (150, 50),
-                        "Enter", key=pygame.K_RETURN, font=GAME_BTN_FONT)
-Game_delete_btn = Button(800, 145, BUTTON_IMAGE, (150, 50),
-                         "Delete", key=pygame.K_BACKSPACE, font=GAME_BTN_FONT)
-Game_shuffle_btn = Button(800, 195, BUTTON_IMAGE, (150, 50),
-                          "Shuffle", key=pygame.K_SPACE, font=GAME_BTN_FONT)
-Game_hint_btn = Button(800, 245, BUTTON_IMAGE, (150, 50),
-                       "Hint", key=pygame.K_1, font=GAME_BTN_FONT)
 
 Game_next_btn = Button(800, 295, BUTTON_IMAGE, (150, 50),
                        "Next Level", key=pygame.K_2, font=GAME_BTN_FONT)
@@ -710,8 +701,19 @@ while run:
                 clicked_place_level = place_level.update(event)
 
                 if clicked_food_level:
+
                     game_level = clicked_food_level
                     game_category = "Food"
+
+                    Game_enter_btn = Button(800, 95, "assets/button/button2.png", (150, 50),
+                                            "Enter", key=pygame.K_RETURN, font=GAME_BTN_FONT)
+                    Game_delete_btn = Button(800, 145, "assets/button/button2.png", (150, 50),
+                                             "Delete", key=pygame.K_BACKSPACE, font=GAME_BTN_FONT)
+                    Game_shuffle_btn = Button(800, 195, "assets/button/button2.png", (150, 50),
+                                              "Shuffle", key=pygame.K_SPACE, font=GAME_BTN_FONT)
+                    Game_hint_btn = Button(800, 245, "assets/button/button2.png", (150, 50),
+                                           "Hint", key=pygame.K_1, font=GAME_BTN_FONT)
+
                     CATEGORY = load_category(game_category)
                     gameplay = Game_play(CATEGORY, game_level)
 
@@ -725,6 +727,16 @@ while run:
                 elif clicked_animal_level:
                     game_level = clicked_animal_level
                     game_category = "Animal"
+
+                    Game_enter_btn = Button(800, 95, "assets/button/button1.png", (150, 50),
+                                            "Enter", key=pygame.K_RETURN, font=GAME_BTN_FONT)
+                    Game_delete_btn = Button(800, 145, "assets/button/button1.png", (150, 50),
+                                             "Delete", key=pygame.K_BACKSPACE, font=GAME_BTN_FONT)
+                    Game_shuffle_btn = Button(800, 195, "assets/button/button1.png", (150, 50),
+                                              "Shuffle", key=pygame.K_SPACE, font=GAME_BTN_FONT)
+                    Game_hint_btn = Button(800, 245, "assets/button/button1.png", (150, 50),
+                                           "Hint", key=pygame.K_1, font=GAME_BTN_FONT)
+
                     CATEGORY = load_category(game_category)
                     gameplay = Game_play(CATEGORY, game_level)
 
@@ -738,6 +750,16 @@ while run:
                 elif clicked_place_level:
                     game_level = clicked_place_level
                     game_category = "Place"
+
+                    Game_enter_btn = Button(800, 95, "assets/button/button3.png", (150, 50),
+                                            "Enter", key=pygame.K_RETURN, font=GAME_BTN_FONT)
+                    Game_delete_btn = Button(800, 145, "assets/button/button3.png", (150, 50),
+                                             "Delete", key=pygame.K_BACKSPACE, font=GAME_BTN_FONT)
+                    Game_shuffle_btn = Button(800, 195, "assets/button/button3.png", (150, 50),
+                                              "Shuffle", key=pygame.K_SPACE, font=GAME_BTN_FONT)
+                    Game_hint_btn = Button(800, 245, "assets/button/button3.png", (150, 50),
+                                           "Hint", key=pygame.K_1, font=GAME_BTN_FONT)
+
                     CATEGORY = load_category(game_category)
                     gameplay = Game_play(CATEGORY, game_level)
 
@@ -749,7 +771,6 @@ while run:
                     game_state = "Gameplay"
 
         elif game_state == "Gameplay":
-
             # Draw game design
             Game_play_world.draw(SCREEN)
             gameplay.Draw(SCREEN)
