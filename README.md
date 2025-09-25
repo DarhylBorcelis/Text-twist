@@ -1,13 +1,13 @@
 # 🎮 Text Twist Game (Pygame)
 
-This is the **first game I made** using **Python & Pygame**.
+This is the **first game we mede** using **Python & Pygame**.
 It’s a simple word puzzle game where players solve words from different categories and unlock new levels as they progress.
 
 ---
 
 ## 🚀 Features
 
-* 📚 Multiple categories (Animals, Food, Places, …)
+* 📚 Multiple categories (Animals, Food, Places)
 * 🔓 Unlockable levels with a lock system
 * 🖼️ Custom backgrounds and banners
 * 🎨 Styled UI with custom fonts
